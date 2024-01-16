@@ -1,0 +1,23 @@
+
+.pr-card {
+    max-width: 45em;
+    width: 95%;
+}
+
+.pr-input {
+    width: auto;
+    margin-left: 1em;
+    padding-left: 1em;
+    border-radius: 5px;
+    border: 1px solid;
+    background-color: white;
+    color: #3f64a9;
+    font-weight: 700;
+    font-size: 14px;
+    font-style: bold;
+}
+
+.pr-input-1 {
+    min-height: 2em !important;
+    border-radius: 5px;
+}

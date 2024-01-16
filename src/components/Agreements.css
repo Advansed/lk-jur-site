@@ -1,0 +1,29 @@
+
+.a-card {
+    max-width: 45em;
+    width: 95%;
+    background-color: #3f64a9; 
+    color: white;
+    padding-left: 2em;
+    padding-bottom: 1em;
+    padding-right: 2em;
+}
+
+.a-input {
+    width: auto;
+    margin-left: 1em;
+    background-color: white;
+    color: #3f64a9;
+    font-weight: 700;
+    font-size: 16px;
+    font-style: bold;
+    min-height: 2em !important;
+    border-radius: 5px;
+
+}
+
+.a-input-cont {
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid;
+}

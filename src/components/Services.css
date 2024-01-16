@@ -1,0 +1,77 @@
+
+.ss-bold {
+    font-size: 1.1em;
+    font-weight: 700;
+}
+.s-card {
+    max-width: 45em;
+    width: 95%;
+
+}
+
+.s-point {
+    cursor: pointer;
+}
+
+.s-input {
+    width: auto;
+    margin-left: 1em;
+    border-radius: 5px;
+    border: 1px solid;
+    background-color: white;
+    color: #3f64a9;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.s-select {
+    min-height: 2em !important;
+    border-radius: 5px;
+    border: 1px solid;
+    background-color: white;
+    color: #3f64a9;
+    font-weight: 600;
+    font-size: 14px;
+}
+.s-input-1 {
+    min-height: 2em !important;
+    border-radius: 5px;
+}
+
+.s-photo {
+    cursor: pointer;
+    background-color: #3880f0;
+    width:  4em;
+    height: 4em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+
+
+}
+
+.s-photo-1 {
+    cursor: pointer;
+    background-color: #3880f0;
+    width:  4em;
+    height: 4em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+.react-dadata__input{
+    font-size:12px !important;
+    background-color: white;
+}
+
+.react-dadata__suggestion-note{
+    font-size:11px !important;
+}
+.react-dadata__suggestion{
+    font-size:12px !important;
+    color: #3f64a9;
+}
+.react-dadata__suggestion--line-through{
+    font-size:11px !important;}

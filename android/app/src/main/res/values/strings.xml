@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">lk-jur-site</string>
+    <string name="title_activity_main">lk-jur-site</string>
+    <string name="package_name">io.stng.lkul</string>
+    <string name="custom_url_scheme">io.stng.lkul</string>
+</resources>

@@ -1,0 +1,7 @@
+{
+  "name": "lk-jur-site",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
