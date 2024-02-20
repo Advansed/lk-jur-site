@@ -5,7 +5,7 @@ import { cameraOutline, playSkipBackCircleOutline } from "ionicons/icons";
 import { jsPDF } from "jspdf";
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { MobilePDFReader } from 'react-read-pdf';
-import { IonButton, IonIcon, IonLoading, IonModal, isPlatform } from "@ionic/react";
+import { IonButton, IonChip, IonIcon, IonLoading, IonModal, isPlatform } from "@ionic/react";
 
 defineCustomElements(window)
 
@@ -69,7 +69,7 @@ export async function toPDF( pages, name ) {
 }
 
 
-export function Files(props: { info, name, check, title }) {
+export function Files(props: { info }) {
     const [ upd,    setUpd] = useState( 0 )
     const [ modal,  setModal] = useState<any>()
     const [ load,   setLoad ] = useState( false)
@@ -79,9 +79,10 @@ export function Files(props: { info, name, check, title }) {
             const imageUrl = await takePicture();
 
             if(imageUrl.format === "pdf") props.info.length = 0
-            else if( props.info.length > 0 && props.info[0].format === "pdf" ) props.info.length = 0
+            else if( props.info.Файлы.length > 0 && props.info.Файлы[0].format === "pdf" ) props.info.Файлы.length = 0
 
-            props.info.push( imageUrl )
+            props.info.Файлы.push( imageUrl )
+            props.info.Модифицирован = true;
                 
         } catch (error) {
             console.log( error )
@@ -93,28 +94,13 @@ export function Files(props: { info, name, check, title }) {
         try {
             const res = await FilePicker.pickFiles({types: ['application/pdf'], multiple: false, readData: true})
             const reader = new FileReader()
-            reader.onloadend = ()=> { 
-                props.info.length = 0
-                console.log( reader.result );
-                props.info.push( { dataUrl: reader.result, format: 'pdf'})
-                setUpd(upd + 1)
-            }
-
-            console.log(JSON.stringify(res.files[0]))
 
             if(res.files[0]?.data){
-                props.info.length = 0
-                props.info.push( { dataUrl: "data:application/pdf;base64," + res.files[0]?.data, format: 'pdf'})
+                props.info.Файлы.length = 0
+                props.info.Файлы.push( { dataUrl: "data:application/pdf;base64," + res.files[0]?.data, format: 'pdf'})
+                props.info.Модифицирован = true;
                 setUpd(upd + 1)
             }
-
-            // if( res.files[0]?.blob )
-            //     reader.readAsDataURL(res.files[0]?.blob as Blob )
-            // else {
-            //     const resp = await fetch( res.files[0]?.path as string )  
-            //     const bl_ob  = await resp.blob();
-            //     reader.readAsDataURL( bl_ob )
-            // }
 
         } catch (error) {
             console.log( error )
@@ -124,33 +110,30 @@ export function Files(props: { info, name, check, title }) {
     
     async function PDF(){
 
-        const pdf = await toPDF( props.info,  name + ".pdf")
+        const pdf = await toPDF( props.info.Файлы,  name + ".pdf")
 
-        props.info.length = 0;
-        props.info.push( { dataUrl: pdf, format: "pdf" } )
+        props.info.Файлы.length = 0;
+        props.info.Файлы.push( { dataUrl: pdf, format: "pdf" } )
+        props.info.Модифицирован = true;
         setUpd( upd + 1 )
     }
+
+    const check = props.info.Обязателен === undefined ? false : props.info.Обязателен
 
     const elem = <>
         <div>
             <div className="flex fl-space t-underline ml-1 mr-1">
-                <div className= { props.check ? "mr-1" : "mr-1" }>
-                    { props.check ? " * " + props.title : props.title }
+                <div className= { check ? "mr-1" : "mr-1" }>
+                    { check ? " * " + props.info.Описание : props.info.Описание }
                 </div>
-                <IonButton
-                    fill="clear"
-                    onClick = {()=>{ 
-                        props.info.pop();    
-                        setUpd(upd + 1)
-                    }}
-                >
-                    <IonIcon icon = { playSkipBackCircleOutline } color={ "light" } className="w-2 h-2"/>
-                </IonButton>
+                <IonIcon icon = { playSkipBackCircleOutline } color={ "primary" } className="w-3 h-3"
+                    onClick = {()=>{ props.info.Файлы.pop();setUpd(upd + 1) }}
+                />
             </div>
                 
             <div className={ "flex fl-wrap" }>
 
-                { props.info.map((e, ind) =>{
+                { props.info.Файлы.map((e, ind) =>{
                     return e.format === "pdf"
                         ? <img key = { ind as number } src = { "assets/pdf.png" } alt="" className="w-4 h-4 ml-1 mt-1 s-point"
                             onClick = {()=>{ setModal( e ) }}
@@ -198,5 +181,38 @@ export function Files(props: { info, name, check, title }) {
         </IonModal>
  
     </>
+    return elem
+}
+
+
+export function Filess(props: { info }){
+    const [ info ] = useState( props.info )
+    const [ index, setIndex ] = useState( 0 )
+
+    let elem = <></>;let item = <></>
+    
+    for(let i = 0; i < info.length;i++){
+        item = <>
+
+            { item }
+
+            <IonChip color="light" className={ index === i ? "a-chip" : "" }  onClick={()=> setIndex( i )}> { i + 1 } </IonChip>
+
+        </>
+    }
+    elem = <>
+        <div className='ml-1 mr-1 mt-1 t-underline flex fl-space pb-05'> 
+            <div><b> { "Файлы" } </b></div>
+        </div>
+        <div className="mt-1 ml-1">
+            { item }
+            { 
+
+                <Files info = { info[ index ] }  />
+
+            }
+        </div>
+    </>
+
     return elem
 }

@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react"
 import { Store, getData } from "./Store"
-import { IonButton, IonIcon, IonImg, IonInput, IonLoading, IonModal, IonText, isPlatform } from "@ionic/react"
+import { IonButton, IonIcon,  IonInput, IonLoading, IonModal, isPlatform } from "@ionic/react"
 import { MobilePDFReader } from 'react-read-pdf';
-import { arrowForwardOutline, mailUnreadOutline, sendOutline } from "ionicons/icons";
-import { setMode } from "@ionic/pwa-elements/dist/types/stencil-public-runtime";
+import { mailUnreadOutline } from "ionicons/icons";
 
 export function ActSverki():JSX.Element {
     const[  info, setInfo] = useState({
         token: Store.getState().login.token,
+        type: "Акт сверки",
+        name: "ActSverki",
         email: Store.getState().profile.элПочта,
         image: "",
     })
     const[ load, setLoad ] = useState( false) 
     const [ modal, setModal ] = useState( false)
     const [ upd, setUpd ] = useState( 0 )
+    const [ message, setMessage ] = useState( "" )
 
     async function Load(){
         setLoad( true)
@@ -28,6 +30,7 @@ export function ActSverki():JSX.Element {
         }
         setLoad( false )
     }
+
     useEffect(()=>{
         const sverk = Store.getState().actsverki
         if(sverk !== "") {
@@ -41,6 +44,8 @@ export function ActSverki():JSX.Element {
         console.log( info )
         const res = await getData('jur_sendMail', info )
         console.log(res)
+        if(!res.error)
+            setMessage( "Акт сверки успешно отправлен на почту")
     }
     const elem = <>
         <IonLoading isOpen={ load } message= "Подождите..."/>
@@ -63,29 +68,39 @@ export function ActSverki():JSX.Element {
                             <img  src = { "assets/pdf.png" } alt="" className="w-4 h-4 ml-1 mt-1 s-point"
                                 onClick = {()=>{ setModal( true ) }}
                             />
-                            <div className="flex fl-space ml-1 mt-2 borders-wp">
-                                <IonInput
-                                    className="ml-1"
-                                    placeholder="email"
-                                    value={ info.email }
-                                    onIonChange={(e)=>{
-                                        info.email = e.detail.value
-                                        setInfo( info )
-                                    }}
-                                />    
-                                <IonIcon icon = { mailUnreadOutline } className="ml-1 w-3 h-3 p-cursor" color="tertiary" 
-                                    onClick={()=>{
-                                        sendMail()
-                                    }}
-                                />  
-                            </div>
+                            {
+                                message === "" 
+                                    ? <>
+                                        <div className="flex fl-space ml-1 mt-2 borders-wp">
+                                            <IonInput
+                                                className="ml-1 cl-prim"
+                                                placeholder="email"
+                                                value={ info.email }
+                                                onIonChange={(e)=>{
+                                                    info.email = e.detail.value
+                                                    setInfo( info )
+                                                }}
+                                            />    
+                                            <IonIcon icon = { mailUnreadOutline } className="ml-1 w-3 h-3 p-cursor" color="tertiary" 
+                                                onClick={()=>{
+                                                    sendMail()
+                                                }}
+                                            />  
+                                        </div>                                    
+                                    </>
+                                    : <>
+                                        <div className="cl-prim ml-1 mt-1">
+                                            <p>{ message }</p>
+                                        </div>
+                                    </>
+                            }
                         </div>
                     </>
             }
 
         </div>
         <IonModal
-            className="w-100 h-100"
+            className="a-modal"
             isOpen = { modal }
             onDidDismiss={ () => setModal( false )}
         >

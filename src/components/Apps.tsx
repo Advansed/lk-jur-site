@@ -1,11 +1,12 @@
-import { IonButton, IonCard, IonChip, IonIcon, IonLabel, IonLoading, IonModal } from "@ionic/react"
+import { IonButton, IonCard, IonChip, IonIcon, IonLoading, IonModal } from "@ionic/react"
 import React, { useEffect, useState } from "react"
 import { Store, getData } from "./Store"
 import "./Apps.css"
-import { arrowForwardOutline, cameraOutline, chevronDownCircleOutline, chevronUpCircleOutline, listCircleOutline, playSkipBackCircleOutline, saveOutline } from "ionicons/icons"
+import { arrowForwardOutline, cameraOutline, playSkipBackCircleOutline, saveOutline } from "ionicons/icons"
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import jsPDF from "jspdf"
+import { Filess } from "./Files"
 
 defineCustomElements(window)
 
@@ -73,18 +74,23 @@ export function Apps():JSX.Element {
     const [ info, setInfo ] = useState<any>([])
     let elem = <></>
 
-    useEffect(()=>{
-        setInfo( Store.getState().apps )
-        console.log( Store.getState().apps )
-    },[])
-
-    Store.subscribe({num: 31, type: "apps", func: ()=>{
+    Store.subscribe({num: 21, type: "apps", func: ()=>{
         setInfo( Store.getState().apps )
     }})
+
+    useEffect(()=>{
+        setInfo( Store.getState().apps )
+        
+        return ()=>{
+            Store.unSubscribe( 21 )
+        }
+    },[])
+
 
     function App(props: { info }):JSX.Element{
         const [files, setFiles] = useState( false )
         const [ load, setLoad ] = useState( false )
+        const [ message, setMessage ] = useState("")
 
         const info = props.info
         
@@ -361,25 +367,37 @@ export function Apps():JSX.Element {
                 </div>
     
                 {
-                    files
-                        ? <Files />
+                    info.files?.Файлы?.length > 0
+                        ? <>
+                            <Filess    info = { info.files.Файлы }/> 
+                            <p className="ml-2">{ message }</p>
+                            <div className="flex fl-space">
+                                <div></div>
+                                <div>
+                                    <IonButton
+                                        onClick={()=>{
+                                            async function upload(){
+                                                const res = await getData("jur_sfiles", {
+                                                    token:  Store.getState().login.token,
+                                                    id:     info.id,
+                                                    files:  info.files
+                                                })
+                                                if(!res.error) {
+                                                    setMessage(res.message);
+                                                    info.files = new Object()
+                                                }
+                                                
+                                            }
+                                            upload()
+                                        }}
+                                    >
+                                        Отправить файлы
+                                    </IonButton>
+                                </div>
+                            </div>
+                        </>
                         : <></>
-                }
-                
-                <div  className="mt-1">
-                    <IonButton
-                        onClick={()=> {
-                            console.log(files)
-                            if( files ) setFiles( false )
-                            else Load()
-
-                        }}
-                    >
-                        <IonIcon  icon = { files ? chevronUpCircleOutline : chevronDownCircleOutline } slot="icon-only"/>
-                        <IonLabel class="ml-1"> {  "Файлы" } </IonLabel>
-                    </IonButton>
-                </div>
-    
+                }                
                  <IonLoading isOpen = { load } message={ "Подождите" }/>
             </IonCard>    
         </>

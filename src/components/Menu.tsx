@@ -1,20 +1,17 @@
 import React from 'react';
 import {
-  IonContent,
   IonIcon,
   IonImg,
   IonItem,
   IonLabel,
-  IonList,
-  IonListHeader,
   IonMenu,
   IonMenuToggle,
-  IonNote,
 } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import { archiveOutline, archiveSharp, bookmarkOutline, calendarOutline, calendarSharp, chatbubbleOutline, chatbubblesOutline, chatbubblesSharp, cogOutline, cogSharp, heartOutline, heartSharp, layersOutline, layersSharp, listOutline, listSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, personCircleOutline, personCircleSharp, trashOutline, trashSharp, warningOutline, warningSharp } from 'ionicons/icons';
+import { calendarOutline, calendarSharp, chatboxEllipsesOutline, chatboxEllipsesSharp, cogOutline, cogSharp, layersOutline, layersSharp, listOutline, listSharp, personCircleOutline, personCircleSharp } from 'ionicons/icons';
 import './Menu.css';
+import { Store } from './Store';
 
 interface AppPage {
   url: string;
@@ -53,6 +50,12 @@ const appPages: AppPage[] = [
     url: '/page/actsverki',
     iosIcon: calendarOutline,
     mdIcon: calendarSharp
+  },
+  {
+    title: 'Контакты',
+    url: '/page/contacts',
+    iosIcon: chatboxEllipsesOutline,
+    mdIcon: chatboxEllipsesSharp
   }
 ];
 
@@ -62,7 +65,11 @@ const Menu: React.FC = () => {
   return (
     <IonMenu contentId="main" type="overlay">
         <div id="inbox-list">
-          <IonImg src = "assets/stng_logo1.svg"  class = "m-img"/>
+          <IonImg src = "assets/stng_logo1.svg"  class = "m-img"
+              onClick= {()=>{
+                Store.dispatch({ type: "route", route: "main"})
+              }}
+          />
           {appPages.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>

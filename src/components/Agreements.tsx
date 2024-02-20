@@ -1,9 +1,9 @@
 
-import { IonAlert, IonButton, IonCard, IonCardHeader, IonIcon, IonImg, IonInput, IonLabel, IonLoading, IonModal, isPlatform } from "@ionic/react"
+import { IonButton, IonCard, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonLoading, IonModal, IonPopover, isPlatform } from "@ionic/react"
 import React, { useEffect, useState } from "react"
 import { Store, getData, getDogs } from "./Store"
 import "./Agreements.css"
-import { checkmarkCircleOutline, closeCircleOutline, listCircleOutline, saveOutline } from "ionicons/icons"
+import { checkmarkCircleOutline, closeCircleOutline, listCircleOutline, mailUnreadOutline, newspaperOutline, saveOutline } from "ionicons/icons"
 import { MobilePDFReader } from 'react-read-pdf';
 
 interface i_counter {
@@ -212,6 +212,61 @@ export function Agreements():JSX.Element {
                 </div>
             </>
 
+
+            function Mail(props: { id }) {
+                const [ mail, setMail ] = useState( "" )
+
+                useEffect(()=>{
+                    setMail(Store.getState().profile.Логин.элПочта[0])
+                },[])
+
+                async function sendMail(id){
+                    setLoad( true)
+                    let res = await getData("jur_invoice_image", {
+                        token : Store.getState().login.token,
+                        id: id,
+                    })
+                    console.log( id )
+                    if(!res.error) {
+                        res = await getData('jur_sendMail', {
+                            token: Store.getState().login.token,
+                            type: "Квитанция",
+                            name: "Kvitok",
+                            email: mail,
+                            image: res.data,
+                        } )
+                        if(!res.error)
+                            setMessages( [{name: "", error: false, message: "Квитанция успешно отправлена на почту"}])
+                        else 
+                        setMessages( [{name: "", error: true, message: "Не получилось отправить квитанцию"}])
+                    } else setMessages( [{name: "", error: true, message: "Не удалось сформировать квитанцию"}])
+    
+                    setLoad( false)
+                }
+
+                const elem = <>
+                    <div className="pb-1">
+                        <div className="flex fl-space ml-1 mr-1 borders-wp">
+                            <IonInput
+                                className="ml-1 cl-prim"
+                                placeholder="email"
+                                value={ mail }
+                                onIonChange={(e)=>{
+                                    setMail( e.detail.value as string );
+                                }}
+                            />    
+                            <IonIcon icon = { mailUnreadOutline } className="ml-1 w-3 h-3 p-cursor" color="tertiary" 
+                                onClick={()=>{
+                                    sendMail( props.id )
+                                }}
+                            />  
+                        </div>
+                    </div>
+                </>
+
+                return elem
+            }
+
             async function getImg( id: string) {
                 setLoad(true)
                 const res = await getData("jur_invoice_image", {
@@ -229,17 +284,35 @@ export function Agreements():JSX.Element {
                         { elem }
                         <div className="mt-1 t-underline flex fl-space"> <b> Выставленный счет </b> <b> { invoices[i].number} </b></div>
                         <div className="mt-1 ml-1 flex">
-                            <div className="w-30 flex">
+                            <div className="w-40 flex">
                                 <IonButton
                                     className="w-60 h-60"
                                     fill = "clear"
-                                    onClick={()=>{
-                                        getImg( invoices[i].id )
-                                    }}
+                                    id      = { "trig-button" + i.toString() }
                                 >
-                                    <IonImg src="assets\extBill.png" alt="" className="w-100 h-100"/>
+                                    <IonImg src="assets\extBill.png" alt="" className="w-100 h-100 a-img"/>
                                 </IonButton>
-                                
+                                <IonPopover
+                                    trigger         = { "trig-button" + i.toString() }
+                                    triggerAction   = 'click'
+                                    className="a-popover"
+                                >
+                                    <IonContent className = "pb-1">
+                                        <div className='flex fl-space ml-2  mr-1 h-4'
+                                            onClick={()=>{
+                                                getImg( invoices[i].id )
+                                            }}                                
+                                        >
+                                            <div>Просмотр</div>
+                                            <IonButton
+                                                fill = "clear"
+                                            >
+                                                <IonIcon icon = { newspaperOutline } slot='icon-only'/>
+                                            </IonButton>
+                                        </div>
+                                        <Mail id = { invoices[i].id }/>
+                                    </IonContent>
+                                </IonPopover>                                
                             </div>
                             <div className="w-70">
                                 <div className="flex fl-space">
@@ -303,7 +376,7 @@ export function Agreements():JSX.Element {
                             }}
                         >
                             <IonIcon  icon = { saveOutline } slot="icon-only"/>
-                            <IonLabel class="ml-1"> Сохранить </IonLabel>
+                            <IonLabel class="ml-1"> Отправить показания </IonLabel>
                         </IonButton>
                     </div>
                 </div>
@@ -323,6 +396,10 @@ export function Agreements():JSX.Element {
     useEffect(()=>{
         setInfo( Store.getState().dogs)
         setInvoices( Store.getState().invoices)
+        return ()=>{
+            Store.unSubscribe( 11 )
+            Store.unSubscribe( 12 )
+        }
     },[])
 
     let items = <></>
@@ -344,17 +421,14 @@ export function Agreements():JSX.Element {
             onDidDismiss={() => setMessages([])}            
             className="a-modal"
       >
-        <div className="w-100">
+        <div className="ml-auto mr-auto mt-2">
             { 
                 messages.map((el)=>{
                     const elem = <>
-                        <div className="fs-09 ml-1 mt-1 mr-4">
-                            { el.message.split(" - ")[0] }
-                        </div>
                         <div className="flex fs-09 mt-1 fl-left">
                             <IonIcon icon={ el.error ? closeCircleOutline : checkmarkCircleOutline } className= { el.error ? "h-15 w-10 cl-red" : "h-15 w-10 cl-green"}></IonIcon> 
-                            <div className={ el.error ? "cl-red w-90" : "cl-green w-90"}> 
-                                { el.message.split(" - ")[1] }
+                            <div className={ "cl-prim w-90"}> 
+                                { el.message.split(" - ")[0] }
                             </div>
                         </div>
                     </>

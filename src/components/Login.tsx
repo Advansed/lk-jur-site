@@ -8,27 +8,35 @@ import { Files, toPDF } from "./Files";
 
 export function Login( ):JSX.Element {
     const [ info, setInfo] = useState<any>({ login: "", password: ""})
-    const [ error, setError] = useState("")
     const [ upd, setUpd] = useState(0)
     const [ reg, setReg] = useState( Store.getState().reg )
     const [ load, setLoad] = useState( false)
+    const [ message, setMessage] = useState<any>()
     
-    Store.subscribe({ num: 2, type: "reg", func: ()=>{
+    Store.subscribe({ num: 61, type: "reg", func: ()=>{
         setReg( Store.getState().reg ) 
+    }})
+
+    Store.subscribe({ num: 62, type: "message", func: ()=>{
+        setMessage( Store.getState().message ) 
     }})
 
     useEffect(()=>{
         setReg( Store.getState().reg ) 
+        return ()=>{
+            Store.unSubscribe( 61 )
+            Store.unSubscribe( 62 )
+        }
     },[])
 
 
     async function Auth() {
         setLoad( true)
         if (info?.password === "" || info?.login === "") {
+            console.log( info )
             info.login = "";info.password = ""
             setInfo(info)      
-            setError("Заполните поля!");
-            setUpd(upd + 1);
+            setMessage({ header: "Проверка", message: "Заполните все поля!" });
         } else {
 
             const  res = await getData("jur_login", info)
@@ -41,8 +49,6 @@ export function Login( ):JSX.Element {
                 info.login = "";info.password = ""
                 setInfo(info)      
     
-                setError( res.message )
-
                 setUpd(upd + 1);
             }
         }
@@ -52,76 +58,67 @@ export function Login( ):JSX.Element {
 
     const elem = <>
         <IonLoading isOpen= { load } message={ "Подождите..."}/>
-    <div className="l-content">
+        <div className="l-content">
 
-        <div className="flex fl-center borders l-card mt-1">
-            <div className="ml-1 mt-1 pb-1 fs-bold"> 
-                Еще нет аккаунта?
+            <div className="l-card pb-1 ml-auto mr-auto">
+                <div className="flex fl-center borders mt-1">
+                    <div className="ml-1 mt-1 pb-1 fs-bold"> 
+                        Еще нет аккаунта?
+                    </div>
+                    <b className="fs-bold a-link" onClick={ ()=> Store.dispatch({ type: "reg", reg: true }) }>Зарегистрируйтесь</b>        
+                </div>
+
+                <div className=" mt-1 pb-2">
+
+                    <div className="flex fl-center">
+                        <img src="assets/logo2.1c3a9d80.svg" alt="" className="mt-2 ml-auto mr-auto"/>
+                    </div>
+
+                    <div className="a-center fs-bold mt-1">Авторизация</div>
+
+                </div>
+
+                <div className="ml-2 mr-2 mt-2 l-bg1 pl-1 pr-1">
+                    <IonInput 
+                        type = "text"
+                        placeholder="Логин"
+                        class="cl-prim fs-bold"
+                        value= { info.login }
+                        onIonChange={(e)=>{
+                            info.login = e.target.value as string;
+                            setInfo(info)
+                        }}
+                    />
+                </div>
+
+                <div className=" flex ml-2 mr-2 mt-1 l-bg1 pl-1 pr-1">
+                    <IonInput 
+                        type = "password"
+                        placeholder="Пароль"
+                        class="cl-prim fs-bold"
+                        value= { info.password }
+                        onIonChange={(e)=>{
+                            info.password = e.target.value as string;
+                            setInfo(info)
+                        }}
+                    />
+                </div>
+
+                <IonButton
+                    className="ml-2 mr-2 mt-1 "
+                    expand="block"
+                    color="tertiary"
+                    mode="ios"
+                    onClick={()=>{
+                        Auth()
+                        console.log("auth")
+                    }}
+                >
+                    Войти
+                </IonButton>
+                    
             </div>
-            <b className="fs-bold a-link" onClick={ ()=> Store.dispatch({ type: "reg", reg: true }) }>Зарегистрируйтесь</b>        
-        </div>
-
-        <div className="l-card mt-1 pb-2">
-
-            <div className="flex fl-center">
-                <img src="assets/logo2.1c3a9d80.svg" alt="" className="mt-2 ml-auto mr-auto"/>
-            </div>
-
-            <div className="a-center fs-bold mt-1">Авторизация</div>
-
-        </div>
-
-        <div className="ml-2 mr-2 mt-2 l-bg1 pl-1 pr-1">
-            <IonInput 
-                type = "text"
-                placeholder="Логин"
-                class="cl-prim fs-bold"
-                value= { info.login }
-                onIonChange={(e)=>{
-                    info.login = e.target.value as string;
-                    setInfo(info)
-                }}
-            />
-        </div>
-
-        <div className="flex ml-2 mr-2 mt-1 l-bg1 pl-1 pr-1">
-            <IonInput 
-                type = "password"
-                placeholder="Пароль"
-                class="cl-prim fs-bold"
-                value= { info.password }
-                onIonChange={(e)=>{
-                    info.password = e.target.value as string;
-                    setInfo(info)
-                }}
-            />
-            {/* <IonButton
-                color="tertiary"
-                mode="ios"
-            >
-                Забыли пароль?
-            </IonButton> */}
-        </div>
-
-        <p className="ml-2 cl-red">
-            { error }
-        </p>
-
-        <IonButton
-            className="ml-2 mr-2 mt-1 "
-            expand="block"
-            color="tertiary"
-            mode="ios"
-            onClick={()=>{
-                Auth()
-                console.log("auth")
-            }}
-        >
-            Войти
-        </IonButton>
     </div>
-    <IonAlert 
-    />
     </>
 
     if(reg)
@@ -339,9 +336,9 @@ export function Registration():JSX.Element {
                 <div className="ml-1 mt-1">
                     {
                         index === 0
-                            ? <Files info = { info.Файлы["Устав"] }     name = "Устав"          check = { true }  title = { info?.ИНН?.length > 10 ? "Копия паспорта" : "Доверенность либо приказ (письменное уполномочие права на официальное представление от имени организации)" }/>
+                            ? <Files info = { { Имя: "Устав", Описание: info?.ИНН?.length > 10 ? "Копия паспорта" : "Доверенность либо приказ (письменное уполномочие права на официальное представление от имени организации)", Обязателен: false, Файлы: info.Файлы["Устав"]}}/>
                         : index === 1
-                            ? <Files info = { info.Файлы["Карточка"] }  name = { "Карточка" }   check = { true }  title = { info?.ИНН?.length > 10 ? "Карточка ИП (юр. адрес, конт.тел. эл. почта, р/с, ОКВЭД)" : "Карточка ЮЛ (юр. адрес, конт.тел. эл. почта, р/с, ОКВЭД)"} />
+                            ? <Files info = { { Имя: "Карточка", Описание: info?.ИНН?.length > 10 ? "Карточка ИП (юр. адрес, конт.тел. эл. почта, р/с, ОКВЭД)" : "Карточка ЮЛ (юр. адрес, конт.тел. эл. почта, р/с, ОКВЭД)", Обязателен: false, Файлы: info.Файлы["Карточка"]}}/>
                         : <></>
                     }
                 </div>
@@ -356,7 +353,9 @@ export function Registration():JSX.Element {
                         <IonButton
                             className={ page === 0 ? "hidden" : ""}
                             onClick={()=>{
-                                 setPage(page - 1)
+                                if( index === 1)
+                                    setIndex(0)
+                                else setPage(page - 1)
                             }}
                         >
                             Назад
@@ -372,15 +371,23 @@ export function Registration():JSX.Element {
                                         setMessages( [] )
                                     }
                                 } else {
-                                    console.log( " button ")
-                                    if( test() ){
-                                        Save()
-                                        setMessages( [] )
-                                    }
+                                    if(index < 1 ) setIndex( 1 )
+                                    else 
+                                        if( test() ){
+                                            Save()
+                                            setMessages( [] )
+                                        }
                                 }
                             }}
                         >
-                            { page === 1 ? "Отправить" : "Далее" }  
+                            { 
+                                page === 1 
+                                    ? index === 1 
+                                        ? "Отправить" 
+                                        : "Далее"
+                                    : "Далее" 
+                                
+                            }  
                         </IonButton>
                     </div>
                 </div>

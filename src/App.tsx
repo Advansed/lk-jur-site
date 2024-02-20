@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IonApp, IonRouterOutlet, IonSplitPane, isPlatform, setupIonicReact } from '@ionic/react';
+import { IonAlert, IonApp, IonRouterOutlet, IonSplitPane, isPlatform, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route, useHistory } from 'react-router-dom';
 import Menu from './components/Menu';
@@ -27,7 +27,6 @@ import './app.css'
 import { Store, getData } from './components/Store';
 import { Login, Registration } from './components/Login';
 import PropTypes from "prop-types";
-import { AR } from './components/AR';
 import OneSignal, { OneSignalPlugin } from 'onesignal-cordova-plugin'
 import { Console } from 'console';
 
@@ -37,6 +36,14 @@ setupIonicReact();
 
 const App: React.FC = () => {
   const [ auth, setAuth ] = useState( Store.getState().auth )
+  const [ message, setMessage] = useState<any>()
+    
+  Store.subscribe({ num: 3, type: "message", func: ()=>{
+      setMessage( Store.getState().message ) 
+      console.log("subscribe message:")
+  }})
+
+
   const hist = useHistory()
   
   function OneSignalInit(): void {
@@ -71,8 +78,9 @@ const App: React.FC = () => {
   Store.subscribe({ num: 1, type: "auth", func: ()=>{
     setAuth( Store.getState().auth ) 
 
-    if( isPlatform("mobile") )
-      OneSignalInit();
+    if( Store.getState().auth )
+      if( isPlatform("mobile") )
+        OneSignalInit();
 
   }})
 
@@ -110,7 +118,6 @@ const App: React.FC = () => {
               <IonRouterOutlet id="lg-main">
                 <Route path="/" 
                   render={(props) => { 
-                    console.log(props.location.hash)
                     if(props.location.hash === ''){
                       return <Login />
                     }
@@ -135,11 +142,14 @@ const App: React.FC = () => {
                 <Route path="/login" exact={true}>
                   <Login />
                 </Route>
-                <Route path="/ar" exact={true}>
-                  <AR />
-                </Route>
               </IonRouterOutlet>
           </IonReactRouter>
+          <IonAlert
+            isOpen =  { message !== undefined }
+            header =  { message?.header }
+            message = { message?.message }
+            buttons={['OK']}
+        />
         </IonApp>
   );
 };

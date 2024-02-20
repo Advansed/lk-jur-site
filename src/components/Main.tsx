@@ -1,5 +1,5 @@
 import { IonImg, IonText } from "@ionic/react"
-import React, { useEffect, useState } from "react"
+import React from "react"
 
 export function Hello():JSX.Element {
     const elem = <>

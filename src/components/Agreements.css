@@ -27,3 +27,31 @@
     border-radius: 5px;
     border: 1px solid;
 }
+
+@media screen and (max-width: 3200px) {
+    .a-popover {
+        --width: 32em;
+        padding-bottom: 1em;
+    }
+      
+}
+
+@media screen and (max-width: 600px) {
+    .a-popover {
+        --width: 80vw;
+        padding-bottom: 1em;
+    }
+      
+}
+
+.a-modal {
+    --width: 80vw;
+    --height: 80vh;
+    --overflow: auto;  
+}
+
+
+.a-img {
+    border-radius: 1em;
+    overflow: hidden;
+}

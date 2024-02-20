@@ -1,349 +1,548 @@
 import React, { useEffect, useState } from "react"
-import { Store, getData } from "./Store"
+import { Store } from "./Store"
 import "./Profile.css"
-import { IonButton, IonCard, IonChip, IonIcon, IonInput, IonLoading, IonModal } from "@ionic/react"
-import { FioSuggestions } from "react-dadata"
-import { createOutline, saveOutline } from "ionicons/icons"
+import { IonButton, IonCard, IonIcon, IonInput, IonModal } from "@ionic/react"
+import { AddressSuggestions, FioSuggestions } from "react-dadata"
+import { arrowBackCircleOutline, listOutline } from "ionicons/icons"
 import MaskedInput from "../mask/reactTextMask"
-import { Files, toPDF } from "./Files"
+import { Filess } from "./Files"
 import Select from "react-tailwindcss-select";
+import SignatureCanvas from 'react-signature-canvas'   
 
-const options = [
-    { value: "Плита1", label: "Газовая плита двухгорелочная" },
-    { value: "Butterfly", label: "🦋 Butterfly" },
-    { value: "Honeybee", label: "🐝 Honeybee masd fds msdfsd sdfsd sdfsdfsdfde" }
-];
+export function Profile(): JSX.Element {
+    const [ info, setInfo ] = useState<any>( Store.getState().profile )
+    const [ mode ] = useState<any>( new Object() )
+    const [ page, setPage ] = useState( 1 )
 
-export function     Profile():JSX.Element {
-    const [ info, setInfo ] = useState<any>()
+
+    Store.subscribe({num: 41, type: "profile", func: ()=>{
+        setInfo( Store.getState().profile )
+    }})
 
     useEffect(()=>{
         setInfo( Store.getState().profile )
+        return ()=>{
+            Store.unSubscribe( 41 )
+        }
     },[])
 
-    Store.subscribe({num: 21, type: "profile", func: ()=>{
-        setInfo( Store.getState().profile )
-      }})
 
-    
-    function Person():JSX.Element {
-        const [ edit, setEdit ] = useState(false)
-        const [ mode, setMode ] = useState(false)
-        const [ load, setLoad ] = useState(false);
-
-        async function Save(){
-
-            setLoad( true )
-            const res = await getData("jur_profile", {
-                token:            Store.getState().login.token,
-                Фамилия:          info.КонтактныеЛица.Фамилия,
-                Имя:              info.КонтактныеЛица.Имя,
-                Отчество:         info.КонтактныеЛица.Отчество,
-                МобильныйТелефон: info.КонтактныеЛица.МобильныйТелефон,
-                РабочийТелефон:   info.КонтактныеЛица.РабочийТелефон,
-            })
-            if(!res.error) {
-                Store.dispatch({type: "profile", profile: res.data[0]})
-                setEdit(false);
-            } 
-            setLoad(false)
+    async function Save(){
+        mode.token = Store.getState().login.token
+        console.log( info )
+        mode.Файлы = undefined
+        for(const [ key ] of Object.entries(info)){
+            if(  key === "Файлы" ) {
+                info.Файлы.Файлы.forEach(elem => {
+                    if( elem.Модифицирован ) {
+                        if( mode.Файлы === undefined){ mode.Файлы = new Object(); mode.Файлы.Файлы = [] }
+                        mode.Файлы.Файлы.push( elem )
+                    }
+                });
+                continue
+            }
+            if( typeof info[ key ] === 'object' ) {
+                for(const [ req ] of Object.entries(info[ key ])){
+                    if(info[ key ][ req ][ 4 ] === true){
+                        console.log( info[ key ][ req ] )
+                        if( mode[ key ] === undefined ) mode[ key ] = new Object()
+                        mode[ key ][ req ] = info[ key ][ req ]
+                    }
+                }
+            }
         }
-        
-        const elem = <>
-            <IonCard className='bg-1 pb-1 pr-card'
-            >
-            <IonLoading isOpen={ load } message="Подождите..." />
-            <div className='ml-1 mr-1 mt-1 t-underline flex fl-space pb-05'> 
-                <div>Контактное лицо</div>
+
+        console.log( mode )
+//        const res = await getData("jur_profile1", mode )
+ //       console.log(res)
+    }
+
+    function Pages( props:{ info, page }){
+        const [ info, setInfo ] = useState( props.info )
+        let elem = <></>
+
+        for(const [ key ] of Object.entries(info)){
+            if( info[key].Страница === props.page ) {
+                switch( key ){
+                    case "Страниц"      : break;
+                    case "ФИО"          : elem = <> { elem } <FIO       info = { info.ФИО }/> </>; break;
+                    case "Файлы"        : elem = <> { elem } 
+                            <div>
+                                <div className='ml-1 mr-1 mt-1 t-underline flex fl-space pb-05'> 
+                                    <div><b> { "Файлы" } </b></div>
+                                </div>
+                                <Filess    info = { info.Файлы.Файлы }/>
+                            </div> </>; break;
+                    default     : {
+                        {
+                            elem = <> 
+                                { elem } 
+                                <div className='ml-1 mr-1 mt-1 t-underline flex fl-space pb-05'> 
+                                    <div><b> { info[key].Описание } </b></div>
+                                </div>
+                            </>
+                            for(const [ req ] of Object.entries(info[ key ])){
+                                if(req === "Страница") continue
+                                if(req === "Описание") continue
+                                switch( info[key][req][1]){
+                                    case "textarea"     : elem = <> { elem } <TextArea  info = { info[key][req] }  /> </>; break;
+                                    case "text"         : elem = <> { elem } <Text      info = { info[key][req] }  /> </>; break;
+                                    case "password"     : elem = <> { elem } <Password  info = { info[key][req] }  /> </>; break;
+                                    case "label"        : elem = <> { elem } <Label     info = { info[key][req] }  /> </>; break;
+                                    case "labelArea"    : elem = <> { elem } <LabelArea info = { info[key][req] }  /> </>; break;
+                                    case "mask"         : elem = <> { elem } <Mask      info = { info[key][req] }  /> </>; break;
+                                    case "date"         : elem = <> { elem } <Date      info = { info[key][req] }  /> </>; break;
+                                    case "box"          : elem = <> { elem } <Box       info = { info[key][req] }  /> </>; break;
+                                    case "address"      : elem = <> { elem } <Address   info = { info[key][req] }  /> </>; break;
+                                    case "fio"          : elem = <> { elem } <FIO       info = { info[key][req] }  /> </>; break;
+                                    default             : elem = <> { elem } </>
+                                }
+                            }                        
+                        }
+                    }
+                }
+                
+        }
+        }
+        elem = <>
+            { elem }
+            <div className="flex fl-space">
+                <div>
+                    <IonButton
+                        className={  "ml-1 mr-1 mt-2" }
+                        mode="ios"
+                        color="primary"
+                        expand="block"
+                        onClick={()=>{
+                            if( info.Страниц > page)
+                                setPage( page + 1 )
+                            else setPage( page - 1 )
+                        }}
+                        >
+                            {
+                                info.Страниц > page ? "Далее" : "Назад"
+                            }
+                    </IonButton>
+                </div>
                 <IonButton
-                    fill="clear"
-                    onClick={()=>{ if( mode ) Save() }}
-                >
-                    <IonIcon icon = { edit ? createOutline : saveOutline } color={ mode ? "warning" : "light" } className='w-2 h-2' />
+                    className="ml-1 mr-1 mt-2"
+                    mode="ios"
+                    color="primary"
+                    expand="block"
+                    onClick={()=>{
+                            Save()
+                    }}>
+                        {
+                            "Сохранить"
+                        }
                 </IonButton>
             </div>
-            <div className={ edit ? "ml-1 mr-1 t-underline cl-blue" : "hidden"}>
-                <FioSuggestions  token="50bfb3453a528d091723900fdae5ca5a30369832"
-                    value={{ 
-                        value: info?.КонтактныеЛица?.Фамилия + " " + info?.КонтактныеЛица?.Имя + " " + info?.КонтактныеЛица?.Отчество, 
-                        unrestricted_value: info?.КонтактныеЛица?.Фамилия + " " + info?.КонтактныеЛица?.Имя + " " + info?.КонтактныеЛица?.Отчество,
-                        data: {
-                            surname:      info?.КонтактныеЛица?.Фамилия,
-                            name:         info?.КонтактныеЛица?.Имя,
-                            patronymic:   info?.КонтактныеЛица?.Отчество,
-                            gender:       "MALE",
-                            source:       null,
-                            qc:           "0"
-                        }
-                    }}
-                        onChange={(e)=>{
-                        setMode(true)
-                        info.КонтактныеЛица.Фамилия   = e?.data.surname;  
-                        info.КонтактныеЛица.Имя       = e?.data.name;  
-                        info.КонтактныеЛица.Отчество  = e?.data.patronymic;  
-                        setEdit(false)
-                    }}/>
-            </div>
-            <div  onClick={()=>{ setEdit(!edit) }} >
-                <div className='flex fl-space ml-2 mt-1 mr-1'>
-                    <div> Фамилия </div>
-                    <div> { info?.КонтактныеЛица?.Фамилия }</div>
+        </>
+        return elem;
+    }
+
+    let elem = <></>
+
+    if( info !== undefined ){
+        elem  = <>
+            <IonCard className="pr-card bg-1">
+                <Pages info = { info } page = { page }/>
+            </IonCard>
+        </>
+    }
+    return elem
+}
+
+
+function    Address( props: { info }){
+    const info = props.info
+    const [ value, setValue ] = useState<any>( { value: info[0] }  )
+    const [ modal, setModal ] = useState( false )
+
+    function ModalForm(){
+        const [ address ] = useState(
+            {
+                area:   [ info[0] === "" ? "" : info[0].split(",")[0], "", "Улус"],
+                city:   [ info[0] === "" ? "" : info[0].split(",")[1], "", "Город" ],
+                settl:  [ info[0] === "" ? "" : info[0].split(",")[2], "", "Населенный пункт" ],  
+                street: [ info[0] === "" ? "" : info[0].split(",")[3], "", "Улица" ],
+                house:  [ info[0] === "" ? "" : info[0].split(",")[4], "", "Дом" ],
+                flat:   [ info[0] === "" ? "" : info[0].split(",")[5], "", "Квартира" ],
+            }
+        )
+        
+        const elem = <>
+            <IonCard className="bg-1 pb-1 m-card">
+                <div className="mr-1">
+                    <TextArea   info = { address.area } />
+                    <TextArea   info = { address.city } />
+                    <TextArea   info = { address.settl } />
+                    <TextArea   info = { address.street } />
+                    <Text       info = { address.house } />
+                    <Text       info = { address.flat } />
                 </div>
-                <div className='flex fl-space ml-2 mt-1 mr-1'>
-                    <div> Имя  </div>
-                    <div> { info?.КонтактныеЛица?.Имя }</div>
+                <div>
+                    <IonButton className="ml-1 mr-1 mt-1"
+                        expand  = "block"
+                        mode    = "ios"
+                        onClick={()=>{
+                            const adr = "" 
+                            + (address.area[0]              === undefined ? "" : address.area[0].trim())
+                            + ", " + (address.city[0]       === undefined ? "" : address.city[0].trim())
+                            + ", " + (address.settl[0]      === undefined ? "" : address.settl[0].trim())
+                            + ", " + (address.street[0]     === undefined ? "" : address.street[0].trim())
+                            + ", " + (address.house[0]      === undefined ? "" : address.house[0].trim())
+                            + ", " + (address.flat[0]       === undefined ? "" : address.flat[0].trim())
+                            
+                            info[0] = adr
+                            setValue({ value: adr } )
+                            setModal(false)
+                            console.log(info)
+                        }}
+                    >
+                        Записать
+                    </IonButton>
                 </div>
-                <div className='flex fl-space ml-2 mt-1 mr-1'>
-                    <div> Отчество </div>
-                    <div> { info?.КонтактныеЛица?.Отчество }</div>
-                </div>
-            </div>
-            <div className='flex fl-space ml-2 mt-1 mr-1'>
-                <div> Мобильный </div>
-                {/* <div> { info?.КонтактныеЛица?.МобильныйТелефон }</div> */}
-                <div className='pr-input pr-1'>
-                    <MaskedInput
-                    mask={[ '7','(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-',/\d/, /\d/]}
-                    className="m-input "
-                    value={ info?.КонтактныеЛица?.МобильныйТелефон }
-                    autoComplete="off"
-                    placeholder="7(___) ___-__-__"
-                    id='1'
-                    type='text'
-                    onChange={(e: any) => {
-                        info.КонтактныеЛица.МобильныйТелефон = e.target.value    
-                        setInfo( info );
-                        setMode( true )
-                    }}
-                    />                
-                </div>
-            </div>
-            <div className='flex fl-space ml-2 mt-1 mr-1'>
-                <div> Рабочий  </div>
-                <div className='pr-input a-right pr-1'>
-                    <MaskedInput
-                        mask={[ '7','(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-',/\d/, /\d/]}
-                        className="m-input "
-                        value={ info?.КонтактныеЛица?.РабочийТелефон }
-                        autoComplete="off"
-                        placeholder="7(____) __-__-__"
-                        id='2'
-                        type='text'
-                        onChange={(e: any) => {
-                        info.КонтактныеЛица.РабочийТелефон = e.target.value    
-                        setInfo( info );
-                        setMode(true) 
+            </IonCard>
+        </>
+
+        return elem
+    }
+
+    const elem = <>
+        <div className='ml-2 mt-1 mr-1'>
+            <div className=""> <b>{ props.info.title }</b>  </div>
+            <div className="flex">
+                <div className="flex s-input ml-1 cl-prim mt-05 w-100"> 
+                    <div className="s-address">
+                        <AddressSuggestions token="50bfb3453a528d091723900fdae5ca5a30369832" 
+                            value={ value } 
+                            filterLocations={[{ region: "Саха /Якутия/" }]}
+                            onChange={(e)=>{
+                                info[0] = "" 
+                                    + (e?.data.area_with_type                === null ? "" : e?.data.area_with_type)
+                                    + ", " + (e?.data.city_with_type         === null ? "" : e?.data.city_with_type)
+                                    + ", " + (e?.data.settlement_with_type   === null ? "" : e?.data.settlement_with_type)
+                                    + ", " + (e?.data.street_with_type       === null ? "" : e?.data.street_with_type)
+                                    + ", " + (e?.data.house                  === null ? "" : e?.data.house)
+                                    + ", " + (e?.data.flat                   === null ? "" : e?.data.flat)
+                                
+                                setValue({ value: info[0]})
+                                console.log( info )
+                        
+                            }} 
+                        />
+                    </div>
+                    <IonIcon icon= { listOutline } className="h-2 w-2"
+                        onClick={()=>{
+                            setModal( true )
+                            console.log(info)
                         }}
                     />
                 </div>
             </div>
-            </IonCard>
-        </>
-        return elem
-    }
+        </div>
+        <IonModal
+            isOpen = { modal }
+            onDidDismiss={ ()=> setModal( false )}
+        >
+            <ModalForm />
+        </IonModal>
+    </>
+    return elem
+}
 
-    function Login():JSX.Element {
-        const [edit, setEdit] = useState(false)
-        const [ load, setLoad] = useState(false);
+function    Text( props: { info }){
+    
+    const info =  props.info
 
-        async function Save(){
-
-        setLoad( true )
-        const param = {
-            token:  Store.getState().login.token,
-            элПочта:        info.элПочта,
-            Логин:          info.Логин,
-            Пароль:         info.Пароль,
-        }
-        const res = await getData("jur_profile", param )
-        console.log(res)
-        if(!res.error) {
-            Store.dispatch({type: "profile", profile: res.data[0]})
-            setEdit(false);
-        }
-        setLoad(false)
-        }
-
-        const elem  = <>
-        <IonLoading isOpen={ load } message="Подождите..."/>
-        <IonCard className='bg-1 pb-1 pr-card'>
-            <div className='ml-1 mr-1 mt-1 t-underline flex fl-space pb-05'> 
-                <div>Логин</div>
-                <IonButton
-                    fill="clear"
-                    onClick={()=>{ if( edit ) Save(); }}
-                >
-                    <IonIcon icon = { saveOutline } color={ edit ? "warning" : "light" } className='w-2 h-2' />
-                </IonButton>
-            </div>
-            <div className='flex fl-space ml-2 mt-1 mr-1'>
-                <div> элПочта </div>
-                <div className='pr-input a-right pr-1'>
-                <IonInput
-                    class='pr-input-1'
-                    value={ info?.элПочта }
-                    placeholder="1234-WW-12"
-                    onIonInput={(e: any) => {
-                    info.элПочта = e.target.value    
-                    setInfo( info );
-                    setEdit(true)
-                    }}
-                />
+    const elem = <>
+        <div className='ml-2 mt-1 mr-1'>
+            <div className="flex fl-space mt-1">
+                <div  className="w-40"> <b>{ info[2] }</b> </div>
+                <div className=' ml-1 s-input a-right pr-1 w-60'>
+                    <IonInput
+                        class='s-input-1'
+                        value={ info[0] }
+                        placeholder={ info[2] }
+                        onIonInput={(e: any) => {
+                            info[0] = e.target.value as string;
+                            info[4] = true
+                            
+                        }}
+                    />
                 </div>
             </div>
-            <div className='flex fl-space ml-2 mt-1 mr-1'>
-                <div> Логин </div>
-                <div className='pr-input a-right pr-1'>
-                <IonInput
-                    class='pr-input-1'
-                    value={ info?.Логин }
-                    placeholder="1234-WW-12"
-                    onIonInput={(e: any) => {
-                    info.Логин = e.target.value    
-                    setInfo( info );
-                    setEdit(true)
-                    }}
-                />
+        </div>
+    </>
+    return elem
+}
+
+function    Password( props: { info }){
+    
+    const info =  props.info
+
+    const elem = <>
+        <div className='ml-2 mt-1 mr-1'>
+            <div className="flex fl-space mt-1">
+                <div  className="w-40"> <b>{ info[2] }</b> </div>
+                <div className=' ml-1 s-input a-right pr-1 w-60'>
+                    <IonInput
+                        class='s-input-1'
+                        value={ info[0] }
+                        placeholder={ info[2] }
+                        type="password"
+                        onIonInput={(e: any) => {
+                            info[0] = e.target.value as string;
+                            info[4] = true
+                        }}
+                    />
                 </div>
             </div>
-            <div className='flex fl-space ml-2 mt-1 mr-1'>
-                <div> Пароль  </div>
-                <div className='pr-input a-right pr-1'>
-                <IonInput
-                    class='pr-input-1'
-                    value={ info?.Пароль }
-                    placeholder="Пароль"
-                    type='password'
-                    onIonInput={(e: any) => {
-                    info.Пароль = e.target.value    
-                    setInfo( info );
-                    setEdit(true)
-                    }}
-                />
-                </div>
-            </div>
-        </IonCard>    
-        </>
+        </div>
+    </>
+    return elem
+}
 
-        return elem
-    }
-
-    function Page():JSX.Element {
-        const[ edit,    setEdit ]   = useState( false ) 
-        const[ load,    setLoad ]   = useState( false)
-        const[ index,   setIndex ]  = useState( 0 )
+function    Mask( props: { info }){
     
-        async function Save(){
+    const info =  props.info
 
-            setLoad( true )
+    const mask: any = []
 
-            if(info.Файлы.Устав.length > 1) {
-                const pdf = await toPDF( info?.Файлы.Устав, "Устав.pdf" );
-                info.Файлы.Устав = [ { dataUrl: pdf, format: "pdf" } ]
-            } 
-    
-            if(info.Файлы.СвидГр.length > 1) {
-                const pdf = await toPDF( info?.Файлы.СвидГр, "СвидГр.pdf" );
-                info.Файлы.СвидГр = [ { dataUrl: pdf, format: "pdf" } ]
-            } 
-    
-            if(info.Файлы.Карточка.length > 1) {
-                const pdf = await toPDF( info?.Файлы.Карточка, "Карточка.pdf" );
-                info.Файлы.Карточка = [ { dataUrl: pdf, format: "pdf" } ]
-            } 
-    
-            if(info.Файлы.ЕГРЮЛ.length > 1) {
-                const pdf = await toPDF( info?.Файлы.ЕГРЮЛ, "ЕГРЮЛ.pdf" );
-                info.Файлы.ЕГРЮЛ =  [ { dataUrl: pdf, format: "pdf" } ]
-            } 
-
-            const param = {
-                token: Store.getState().login.token,
-                Устав:      info.Файлы.Устав,
-                Карточка:   info.Файлы.Карточка,
-                СвидГр:     info.Файлы.СвидГр,
-                ЕГРЮЛ:      info.Файлы.ЕГРЮЛ,
-            }
-    
-            const res = await getData("jur_profile", param)
-            if(!res.error) setEdit( false ) 
-            setLoad(false);
-    
-        }
-
-    
-        if(info === undefined || info === "") return <></>
-        else {
-            const elem = <>
-                <IonCard className='bg-1 pb-1 pr-card'>
-                    <IonLoading isOpen = { load } message= "Подождите" />
-
-                    <div className="flex fl-space">
-                        <div className=" ml-1 mt-1">
-                            <IonChip color="light" className={ index === 0 ? "a-chip" : "" }  onClick={()=> setIndex( 0 )}> 1 </IonChip>
-                            <IonChip color="light" className={ index === 1 ? "a-chip" : "" }  onClick={()=> setIndex( 1 )}> 2 </IonChip>
-                            <IonChip color="light" className={ index === 2 ? "a-chip" : "" }  onClick={()=> setIndex( 2 )}> 3 </IonChip>
-                        </div>
-                        <IonButton
-                            className="mt-1 mr-1"
-                            fill="clear"
-                            onClick={()=>{ if( edit ) Save(); }}
-                        >
-                            <IonIcon icon = { saveOutline } color={ edit ? "warning" : "light" } className='w-2 h-2' />
-                        </IonButton>
-                    </div>
-
-                    <div className="ml-1 mt-1 ">
-                        {
-                            index === 0
-                                ? <Files info = { info.Файлы.Устав }    name = { "Устав" }      check = { false }  title = { info?.ИНН.length > 10 ? "Копия паспорта" : "Устав" }/>
-                            : index === 1
-                                ? <Files info = { info.Файлы.Карточка } name = { "Карточка" }   check = { false }  title = { info?.ИНН.length > 10 ? "Карточка ИП" : "Карточка ЮЛ" }/>
-                            : index === 2
-                                ? <Files info = { info.Файлы.ЕГРЮЛ }    name = { "ЕГРЮЛ" }      check = { false }  title = { "ЕГРЮЛ" }/>
-                            : <></>
-                        }
-                    </div>
-                    <div className='ml-1 mr-1 mt-1 flex fl-space pb-05'> 
-                        <div></div>
-                    </div>
-                </IonCard>
-            </>
-            return elem
+    for (let i = 0; i < info[3].length; i++) {
+        switch(info[3].charAt(i)){
+            case '9': mask.push( /[1-9]/ ); break
+            case 'd': mask.push( /\d/ ); break
+            default : mask.push( info[3].charAt(i) )
         }
     }
 
-    let  elem = <></>
-
-    elem = <>
-
-        <IonCard className='bg-1 pb-1 pr-card'>
-            <div className='ml-1 mr-1 mt-1 t-underline'> Организация </div>
-            <div className='flex fl-space ml-2 mt-1 mr-1'>
-                <div> Наименование </div>
-                <div className='a-right'> { info?.Наименование }</div>
+    const elem = <>
+        <div className='ml-2 mt-1 mr-1'>
+            <div className="flex fl-space mt-1">
+                <div  className="w-40"> <b>{ info[2] }</b> </div>
+                <div className=' ml-1 s-input a-right pr-1 w-60'>
+                <div className="l-input pl-1">
+                    <MaskedInput
+                        mask={ mask }
+                        className="m-input"
+                        id='1'
+                        value={ info[0] }
+                        placeholder = { info[2] }
+                        type='text'
+                        onChange={(e) => {
+                            info[0] = e.target.value as string;
+                            info[4] = true    
+                        }}
+                    />
+                </div>
+                </div>
             </div>
-            <div className='flex fl-space ml-2 mt-1 mr-1'>
-                <div> ИНН </div>
-                <div> { info?.ИНН }</div>
+        </div>
+    </>
+    return elem
+}
+
+function    FIO( props: { info }){
+    const [ value ] = useState<any>({
+        value: props.info[0]
+    })
+    
+    const info =  props.info
+
+    const elem = <>
+        <div className='ml-2 mt-1 mr-1'>
+            <div className="mt-1">
+                <div  className="w-40"> <b>{ info[2] }</b> </div>
+                <div className=' ml-1 s-input a-right'>
+                <FioSuggestions  token="50bfb3453a528d091723900fdae5ca5a30369832"
+                    value={ value }
+                    onChange={(e)=>{
+                        info[0] = e?.value
+                        console.log( e )    
+                        info[4] = true
+                    }}/>
+                </div>
             </div>
-            <div className='flex fl-space ml-2 mt-1 mr-1'>
-                <div> КПП </div>
-                <div> { info?.КПП }</div>
+        </div>
+    </>
+    return elem
+}
+
+function    Label( props: { info }){
+    
+    const info =  props.info
+
+    const elem = <>
+        <div className='ml-2 mt-1 mr-1'>
+            <div className="flex fl-space mt-1">
+                <div  className="w-40"> <b>{ info[2] }</b> </div>
+                <div className=' ml-1 s-input a-right pr-1 w-60'>
+                    <IonInput
+                        class='s-input-1'
+                        value={ info[0] }
+                        placeholder={ info[2] }
+                        readonly
+                    />
+                </div>
             </div>
-            <div className='flex fl-space ml-2 mt-1 mr-1'>
-                <div> Куратор </div>
-                <div className='a-right'> { info?.Куратор }</div>
+        </div>
+    </>
+    return elem
+}
+
+function    TextArea( props: { info }){
+    const info = props.info
+
+    console.log(info)
+    console.log(info[0])
+    const elem = <>
+        <div className='ml-2 mt-1 mr-1'>
+            <div className="mt-1">
+                <div  className=""> <b>{ info[2] }</b> </div>
+                <div className=' ml-1 s-input a-right pr-1 w-100'>
+                    <IonInput
+                        class='s-input-1'
+                        value={ info[0] }
+                        placeholder={ info[2] }
+                        onIonInput={(e: any) => {
+                            info[0] = e.target.value  
+                            info[4] = true
+                            if( props.info.onInput !== undefined ) 
+                                props.info.onInput( e.target.value ) 
+                        }}
+                    />
+                </div>
             </div>
-        </IonCard>
+        </div>
+    </>
+    return elem
+}
 
-        <Person />
+function    LabelArea( props: { info }){
+    const info = props.info
 
-        <Login /> 
+    const elem = <>
+        <div className='ml-2 mt-1 mr-2'>
+            <div className="mt-1">
+                <div  className=""> <b>{ info[2] }</b> </div>
+                <div className=' ml-1 s-input a-right pr-1 w-100'>
+                    <IonInput
+                        class='s-input-1'
+                        value={ info[0] }
+                        placeholder={ info[2] }
+                        readonly
+                    />
+                </div>
+            </div>
+        </div>
+    </>
+    return elem
+}
 
-        <Page />
+function    Date( props: { info }) {
 
+    const info = props.info
+
+    const elem = <>
+        <div className='ml-2 mt-1 mr-1'>
+            <div className="flex fl-space mt-1">
+                <div className="w-40"> <b>{ info[2] }</b> </div>
+                <div className=' ml-1 s-input a-right pr-1 w-60'>
+                    <MaskedInput
+                        className='m-input a-right'
+                        mask={[ /[1-9]/, /\d/, '.', /\d/, /\d/,'.', /\d/, /\d/, /\d/, /\d/]}
+                        value={ info[0] }
+                        placeholder="__.__.____"
+                        onInput={(e: any) => {
+                            
+                            info[0] = (e.target.value as string).substring(0, 10)
+                            info[4] = true
+                        }}
+                    />
+                </div>
+            </div>
+        </div>
 
     </>
+    return elem
+}
+
+function    Box(props: { info }) {
+    
+    const info = props.info
+
+    const [ value, setValue ] = useState( info[0] === "" ? { value: "Выберите..", label: "Выберите.." } : { value: info[0], label: info[0]} )
+    
+    const options: any = []
+    props.info.choice.forEach(elem => {
+        options.push(
+            { value: elem, label: elem }
+        )
+    });
+
+    const handleChange = value => {
+        setValue(value);
+        info[0] = value.value 
+        info[4] = true
+    };
+    let elem = <></>
+
+    elem = <>
+        <div className='ml-2 mt-1 mr-1'>
+            <div className="mt-1">
+                <div  className="w-90"> <b>{ info[2] }</b> </div>
+                <div className=' ml-1 s-input pl-1 pr-1 w-60'>
+                    <Select options={ options } value={ value } primaryColor="red" onChange={ handleChange } 
+                         classNames={{
+                            listItem: ( isSelected ) => (
+                                `sbl-item`
+                            )
+                        }}
+                    />
+                </div>
+            </div>
+        </div>
+
+    </>
+    return elem
+}
+
+function    Sign(props: { info }) {
+    const [ sig, setSig ] = useState<any>()
+
+    const elem = <>
+        <div>
+            <div className="ml-1 mt-1 flex fl-space">
+                <div className="fs-14">Поставьте подпись</div>
+                <div>
+                    <IonIcon icon = { arrowBackCircleOutline } className="w-3 h-3 mr-1"
+                        onClick={()=>{
+                            sig.clear()
+                        }}
+                    />
+                </div>
+            </div>
+            <SignatureCanvas 
+                penColor='blue' 
+                canvasProps={ {width: 500, height: 200, className: 'sigCanvas'} } 
+                ref = {(ref)=>{ setSig(ref) }}
+                onEnd = {()=>{
+                    let pdp = false
+                    props.info.Файлы.forEach(elem => {
+                        if(elem.Имя === "Подпись"){  pdp = true
+                            elem.Файлы = [ { dataUrl: sig.toDataURL(), format: "png" } ]
+                        }
+                    });
+                    if( !pdp ) {
+                        props.info.Файлы.push({ Имя: "Подпись", Описание: "Подпись клиента", Файлы: [ { dataUrl: sig.toDataURL(), format: "png" } ]})
+                    }
+                }}
+            />
+        </div>               
+
+    </>
+
     return elem
 }

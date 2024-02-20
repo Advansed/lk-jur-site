@@ -35,6 +35,7 @@
     "react-read-pdf": "^2.0.9",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
+    "react-signature-canvas": "^1.0.6",
     "react-tailwindcss-select": "^1.8.5",
     "redux": "^4.2.1",
     "typescript": "^4.1.3",

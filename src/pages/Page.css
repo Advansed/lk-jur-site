@@ -6,6 +6,8 @@
     font-size: .95rem;
     font-weight: 500;
     color: #7f8da8;
+    height: 4em;
+    background-color:  white;
 
     /* padding-bottom: 1em; */
     border-bottom: 1px solid silver;
@@ -47,4 +49,8 @@
     letter-spacing: normal;
     font-weight: 600;
 
+}
+
+.p-div:hover {
+    background-color: #ebecec;
 }
