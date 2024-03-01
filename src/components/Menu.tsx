@@ -56,6 +56,12 @@ const appPages: AppPage[] = [
     url: '/page/contacts',
     iosIcon: chatboxEllipsesOutline,
     mdIcon: chatboxEllipsesSharp
+  },
+  {
+    title: 'Удалить аккаунт',
+    url: '/page/delaccount',
+    iosIcon: chatboxEllipsesOutline,
+    mdIcon: chatboxEllipsesSharp
   }
 ];
 
@@ -65,7 +71,7 @@ const Menu: React.FC = () => {
   return (
     <IonMenu contentId="main" type="overlay">
         <div id="inbox-list">
-          <IonImg src = "assets/stng_logo1.svg"  class = "m-img"
+          <IonImg src = "assets/stng_logo1.svg"  class = "m-img mt-2"
               onClick= {()=>{
                 Store.dispatch({ type: "route", route: "main"})
               }}

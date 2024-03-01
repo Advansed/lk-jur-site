@@ -7,7 +7,7 @@ import 'react-dadata/dist/react-dadata.css';
 import { Files, toPDF } from "./Files";
 
 export function Login( ):JSX.Element {
-    const [ info, setInfo] = useState<any>({ login: "", password: ""})
+    const [ info, setInfo] = useState({ login: "", password: ""})
     const [ upd, setUpd] = useState(0)
     const [ reg, setReg] = useState( Store.getState().reg )
     const [ load, setLoad] = useState( false)
@@ -58,7 +58,7 @@ export function Login( ):JSX.Element {
 
     const elem = <>
         <IonLoading isOpen= { load } message={ "Подождите..."}/>
-        <div className="l-content">
+        <div className="l-content mt-3">
 
             <div className="l-card pb-1 ml-auto mr-auto">
                 <div className="flex fl-center borders mt-1">
@@ -103,6 +103,8 @@ export function Login( ):JSX.Element {
                         }}
                     />
                 </div>
+
+                <p>{ message }</p>
 
                 <IonButton
                     className="ml-2 mr-2 mt-1 "
@@ -444,7 +446,7 @@ export function Registration():JSX.Element {
     
     const elem = <>
         <IonLoading message = "Подождите" isOpen = { load } />
-        <div className="l-content">
+        <div className="l-content mt-3">
             <IonCard className="l-card-1 mt-2 pb-1">
                 <div className="flex ml-1 mt-1 fs-bold"> У вас уже есть аккаунт? 
                     <span className="t-underline ml-1 cl-yellow"

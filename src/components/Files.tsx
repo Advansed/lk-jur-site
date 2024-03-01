@@ -153,7 +153,8 @@ export function Files(props: { info }) {
 
                 <img key = { 100 } src = "assets/pdf.png" alt="pdf"  className="ml-1 s-photo-1 mt-1"
                     onClick={()=>{
-                        if(props.info.length > 1)
+                        console.log(props)
+                        if(props.info.Файлы.length > 1)
                             PDF()
                         else openPDF()
                     }}              
@@ -163,7 +164,7 @@ export function Files(props: { info }) {
         </div> 
         <IonLoading isOpen = { load } message = "Подождите..."/>
         <IonModal
-            className="w-100 h-100"
+            className="a-modal"
             isOpen = { modal !== undefined }
             onDidDismiss={ () => setModal( undefined )}
         >

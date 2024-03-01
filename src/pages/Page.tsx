@@ -1,16 +1,17 @@
-import { IonAlert, IonButton, IonButtons, IonIcon, IonLabel, IonMenuButton } from '@ionic/react';
-import React, { useState } from 'react';
+import { IonButton, IonButtons, IonIcon, IonMenuButton } from '@ionic/react';
+import React from 'react';
 import { useHistory, useParams } from 'react-router';
 import './Page.css';
 import { Store } from '../components/Store';
 import { Agreements } from '../components/Agreements';
-import { arrowBackOutline, chatboxEllipsesOutline, logOutOutline, personCircleOutline } from 'ionicons/icons';
+import { arrowBackOutline, logOutOutline, personCircleOutline } from 'ionicons/icons';
 import { Profile } from '../components/Profile';
 import { Apps } from '../components/Apps';
 import { Services } from '../components/Services';
 import { ActSverki } from '../components/ActSverki';
 import { Hello } from '../components/Main';
 import { Contacts } from '../components/Contacts';
+import { DelAccount } from '../components/DelAccount';
 
 
 
@@ -28,6 +29,7 @@ const Page: React.FC = () => {
     {name: "actsverki", title: "Акт сверки", JSX: function():JSX.Element { return <ActSverki />}},
     {name: "main", title: "Приветствие", JSX: function():JSX.Element { return <Hello />}},
     {name: "contacts", title: "Контакты", JSX: function():JSX.Element { return <Contacts />}},
+    {name: "delaccount", title: "Удалить аккаунт", JSX: function():JSX.Element { return <DelAccount />}},
   ] 
 
 
@@ -134,7 +136,7 @@ const Page: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className='mt-3'>
       <Tools />
       <div className='flex'>
         <div className='p-content'>

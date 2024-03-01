@@ -286,11 +286,11 @@ export function Agreements():JSX.Element {
                         <div className="mt-1 ml-1 flex">
                             <div className="w-40 flex">
                                 <IonButton
-                                    className="w-60 h-60"
+                                    className="w-80 h-80"
                                     fill = "clear"
                                     id      = { "trig-button" + i.toString() }
                                 >
-                                    <IonImg src="assets\extBill.png" alt="" className="w-100 h-100 a-img"/>
+                                    <IonImg src="assets/extBill.png" alt="download bill" className="a-img"/>
                                 </IonButton>
                                 <IonPopover
                                     trigger         = { "trig-button" + i.toString() }

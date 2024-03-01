@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { IonAlert, IonApp, IonRouterOutlet, IonSplitPane, isPlatform, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { Redirect, Route, useHistory } from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
 import Menu from './components/Menu';
 import Page from './pages/Page';
 
@@ -24,11 +24,11 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import './app.css'
-import { Store, getData } from './components/Store';
-import { Login, Registration } from './components/Login';
+import { Store } from './components/Store';
+import { Login } from './components/Login';
 import PropTypes from "prop-types";
-import OneSignal, { OneSignalPlugin } from 'onesignal-cordova-plugin'
-import { Console } from 'console';
+import OneSignal from 'onesignal-cordova-plugin'
+
 
 
 setupIonicReact();
@@ -44,8 +44,6 @@ const App: React.FC = () => {
   }})
 
 
-  const hist = useHistory()
-  
   function OneSignalInit(): void {
 
     // Uncomment to set OneSignal visual logging to VERBOSE  

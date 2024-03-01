@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.stng.lkul',
-  appName: 'lk-jur-site',
+  appName: 'СТНГ ЮЛ',
   webDir: 'build',
   server: {
     androidScheme: 'https'
