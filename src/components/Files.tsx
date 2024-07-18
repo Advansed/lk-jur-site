@@ -1,15 +1,22 @@
 import React, { useState } from "react";
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { cameraOutline, playSkipBackCircleOutline } from "ionicons/icons";
+import { cameraOutline, playSkipBackCircleOutline, sendOutline } from "ionicons/icons";
 import { jsPDF } from "jspdf";
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { MobilePDFReader } from 'react-read-pdf';
 import { IonButton, IonChip, IonIcon, IonLoading, IonModal, isPlatform } from "@ionic/react";
+import { Document, Page } from 'react-pdf';
+import { pdfjs } from 'react-pdf';
+import { Store, getData } from "./Store";
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 defineCustomElements(window)
 
-async function    takePicture() {
+async function          takePicture() {
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: false,
@@ -26,7 +33,7 @@ async function    takePicture() {
   
   }
 
-export async function toPDF( pages, name ) {
+export async function   toPDF( pages, name ) {
     const doc = new jsPDF('p', 'mm', 'a4');
     
     for(let i = 0; i < pages.length; i++){
@@ -69,7 +76,7 @@ export async function toPDF( pages, name ) {
 }
 
 
-export function Files(props: { info }) {
+export function         Files(props: { info }) {
     const [ upd,    setUpd] = useState( 0 )
     const [ modal,  setModal] = useState<any>()
     const [ load,   setLoad ] = useState( false)
@@ -172,9 +179,9 @@ export function Files(props: { info }) {
                 {  
                     modal?.format === "pdf" 
                         ? isPlatform("ios")
-                            ? <MobilePDFReader url={ modal?.dataUrl }/> 
+                            ? <PDFDoc url = { modal?.dataUrl } name  = { props.info.Имя } title = { props.info.Описание }/>
                             :  isPlatform("android")
-                            ? <MobilePDFReader url={ modal?.dataUrl }/> 
+                            ? <PDFDoc url = { modal?.dataUrl } name  = { props.info.Имя } title = { props.info.Описание }/>
                             : <iframe title="pdf" src = { modal?.dataUrl } className="w-100 h-100"/>
                         : <img src={ modal?.dataUrl } alt = "" />
                 }
@@ -185,8 +192,77 @@ export function Files(props: { info }) {
     return elem
 }
 
+export function         PDFDoc( props ){
+    const [ pages, setPages ] = useState<any>(1)
+    const [ page, setPage ] = useState(1)
+    const [ width, setWidth ] = useState( 380 )
+    const [ height, setHeight ] = useState( 190 )
+    const [ message, setMessage ] = useState("")
+    return <>
+        <div className="h-3 pl-2 w-100 bg-2 flex">
+            <div>PDF view</div>
+            <div className="ml-1">
+                <IonButton
+                    onClick={()=>{ setWidth( width - 50 )}}
+                >-</IonButton>
+            </div>
+            <div className="ml-1">
+                <IonButton
+                    onClick={()=>{ setWidth( width + 50 )}}
+                >+</IonButton>
+            </div>
+            <div className="ml-1">
+                <IonButton
+                    /* eslint-disable */
+                    onClick={()=>{ 
+                        async function send() {
+                            console.log( Store.getState().profile )
+                            const res = await getData('jur_sendmail', {
+                                token: Store.getState().login.token,
+                                type: props.title,
+                                name: props.name,
+                                email: Store.getState().profile.Логин.элПочта[0],
+                                image: props.url,
+                            } )
 
-export function Filess(props: { info }){
+                            setMessage(res.message)
+
+                        }
+                        send()
+                    }}
+                ><IonIcon icon = { sendOutline }/></IonButton>
+            </div>
+        </div>
+        <p className="m-stack fs-bold fs-2 cl-prim ml-2">{ message }</p>
+        <div className="m-content scroll"> 
+            <Document 
+                file={ props.url } 
+                
+                onLoadSuccess={( pdfInfo )=>{ setPages( pdfInfo._pdfInfo.numPages );  console.log(pdfInfo._pdfInfo)}}
+            >
+                <Page renderTextLayer = { false } renderAnnotationLayer = { false } pageNumber={ page } width={ width } height={ height }/>
+            </Document>
+        </div>
+        <div className="h-3 bg-2 pl-1 pr-1 flex fl-space">
+            
+            <IonButton
+                onClick={()=>{if(page > 1 ) setPage(page - 1)}}
+            > Назад </IonButton>
+
+            <div>
+                { "страница " + page + " из " + pages }
+            </div>
+
+            <IonButton
+                onClick={()=>{if(page < pages ) setPage(page + 1)}}
+            > Вперед </IonButton>
+
+        </div>
+    </>
+}
+
+
+export function         Filess(props: { info }){
     const [ info ] = useState( props.info )
     const [ index, setIndex ] = useState( 0 )
 

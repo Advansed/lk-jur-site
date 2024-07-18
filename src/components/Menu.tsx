@@ -9,7 +9,7 @@ import {
 } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import { calendarOutline, calendarSharp, chatboxEllipsesOutline, chatboxEllipsesSharp, cogOutline, cogSharp, layersOutline, layersSharp, listOutline, listSharp, personCircleOutline, personCircleSharp } from 'ionicons/icons';
+import { calendarOutline, calendarSharp, chatboxEllipsesOutline, chatboxEllipsesSharp, cogOutline, cogSharp, helpOutline, helpSharp, layersOutline, layersSharp, listOutline, listSharp, personCircleOutline, personCircleSharp } from 'ionicons/icons';
 import './Menu.css';
 import { Store } from './Store';
 
@@ -32,6 +32,12 @@ const appPages: AppPage[] = [
     url: '/page/apps',
     iosIcon: listOutline,
     mdIcon: listSharp
+  },
+  {
+    title: 'Информация',
+    url: '/page/info',
+    iosIcon: helpOutline,
+    mdIcon: helpSharp,
   },
   {
     title: 'Услуги',

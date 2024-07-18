@@ -4,6 +4,8 @@ import { Reducer } from 'react';
 
 const reducers: Array<Reducer<any, any>> = []
 
+const version = "2.0.1"
+
 export const i_state = {
 
     auth:                               false,
@@ -29,8 +31,10 @@ export const i_state = {
 
 }
 
+const roots: any = {};
 
 for(const [key, value] of Object.entries(i_state)){
+
     reducers.push(
         function (state = i_state[key], action) {
             switch(action.type){
@@ -52,8 +56,9 @@ for(const [key, value] of Object.entries(i_state)){
                 default: return state;
             }       
         }
-
     )
+
+    roots[ key ] = reducers[ reducers.length - 1 ];
 }
 
 
@@ -131,27 +136,7 @@ function                create_Store(reducer, initialState) {
     };
 }
 
-
-const                   rootReducer = combineReducers({
-
-    auth:                      reducers[ 0],
-    reg:                       reducers[ 1],
-    route:                     reducers[ 2],
-    login:                     reducers[ 3],
-    dogs:                      reducers[ 4],
-    dog1:                      reducers[ 5],
-    dog2:                      reducers[ 6],
-    payments:                  reducers[ 7],
-    invoices:                  reducers[ 8],
-    apps:                      reducers[ 9],
-    profile:                   reducers[10],
-    actsverki:                 reducers[11],
-    services:                  reducers[12],
-    back:                      reducers[13],
-    message:                   reducers[14],
-    index:                     reducers[15],
-
-})
+const                   rootReducer = combineReducers( roots );
 
 
 export const Store   =  create_Store(rootReducer, i_state)

@@ -92,3 +92,15 @@
     word-wrap: break-word !important;
     letter-spacing: normal !important;
   }
+
+  .l-textURL {
+    padding-bottom: 20px;
+    width: 100%;
+    margin-top: 15px;
+    text-align: center;
+    color:  #3f64a9;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-decoration: underline;
+  }
+  

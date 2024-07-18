@@ -3,6 +3,7 @@ import React from "react"
 
 export function Hello():JSX.Element {
     const elem = <>
+        <div className="ml-auto mr-auto p-page">
         <div className="p-text">
             <IonImg src = "assets/stng_logo1.svg"  class = "m-img"/>
             <p className="a-center">
@@ -23,6 +24,7 @@ export function Hello():JSX.Element {
             <p className="ml-3">
                 <IonText color={"tertiary"}> - подавать заявления на заключения/перезаключения договоров на поставку газа</IonText>
             </p>
+        </div>
         </div>
     </>
     return elem

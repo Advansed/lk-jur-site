@@ -33,6 +33,7 @@
     "react-ar-components": "^4.4.0",
     "react-dadata": "^2.23.1",
     "react-dom": "^18.2.0",
+    "react-pdf": "^9.1.0",
     "react-read-pdf": "^2.0.9",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",

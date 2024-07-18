@@ -1,0 +1,32 @@
+.in-input1 {
+    border-radius: 0.5em;
+    border: 1px solid silver;
+    padding: 1em;
+    position: relative;
+    max-width: 32em;
+}
+
+.in-w1 {
+    width: 2em;
+}
+
+.in-w2 {
+    width: calc(100% - 2em);
+}
+
+
+@media screen and (max-width: 600px) {
+    .i-img1 {
+        /* max-width: 30em; */
+        width: auto;
+    }
+    
+}
+
+@media screen and (min-width: 600px) {
+    .i-img1 {
+        max-width: 30em;
+    }    
+}
+
+

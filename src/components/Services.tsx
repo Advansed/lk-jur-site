@@ -189,6 +189,7 @@ export function Services(){
 
     elem = <>
         <IonLoading message={ "Подождите..." } isOpen = { load }/>
+        <div className="p-page ml-auto mr-auto">
         {
               page === 0 ? elem 
             : <>
@@ -216,6 +217,7 @@ export function Services(){
             </>
                 
         }
+        </div>
         <IonModal
             className="s-modal"
             isOpen = { alert !== undefined }

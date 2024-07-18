@@ -158,6 +158,7 @@ export function Contacts(){
     }
 
     const elem = <>
+        <div className="ml-auto mr-auto p-page">
         <IonCard className="pb-1">
             <div className="mt-1 ml-1 fs-14 cl-black">
                 <b>Как связаться с нами</b>
@@ -168,6 +169,7 @@ export function Contacts(){
             <Items1 />
             <Items2 />
         </IonCard>
+        </div>
     </>
 
     return elem

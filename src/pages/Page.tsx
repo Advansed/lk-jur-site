@@ -12,6 +12,7 @@ import { ActSverki } from '../components/ActSverki';
 import { Hello } from '../components/Main';
 import { Contacts } from '../components/Contacts';
 import { DelAccount } from '../components/DelAccount';
+import { Info } from '../components/Info';
 
 
 
@@ -25,6 +26,7 @@ const Page: React.FC = () => {
     {name: "agreements", title: "Договора", JSX: function():JSX.Element { return <Agreements />}},
     {name: "personal", title: "Личные данные", JSX: function():JSX.Element { return <Profile />}},
     {name: "apps", title: "Заявки", JSX: function():JSX.Element { return <Apps />}},
+    {name: "info", title: "Информация", JSX: function():JSX.Element { return <Info />}},
     {name: "services", title: "Услуги", JSX: function():JSX.Element { return <Services />}},
     {name: "actsverki", title: "Акт сверки", JSX: function():JSX.Element { return <ActSverki />}},
     {name: "main", title: "Приветствие", JSX: function():JSX.Element { return <Hello />}},
@@ -68,9 +70,11 @@ const Page: React.FC = () => {
               <div>
                 <IonIcon icon = { arrowBackOutline } className='w-2 h-2' slot ="icon-only" color='tertiary'
                   onClick={ ()=> { 
+                    console.log(" back - " + name )
                     switch (name) {
                       case 'main': hist.push( "agreements" );break;
                       case 'services': Store.dispatch({type: "back", back: Store.getState().back++ });break;
+                      case 'info': Store.dispatch({type: "back", back: Store.getState().back++ });break;
                     
                       default: hist.goBack();  break;
                     }
@@ -108,6 +112,7 @@ const Page: React.FC = () => {
                     switch (name) {
                       case 'main': hist.push( "agreements" );break;
                       case 'services': Store.dispatch({type: "back", back: Store.getState().back++ });break;
+                      case 'info': Store.dispatch({type: "back", back: Store.getState().back++ });break;
                     
                       default: hist.goBack();  break;
                     }
@@ -136,7 +141,7 @@ const Page: React.FC = () => {
   }
 
   return (
-    <div className='mt-3'>
+    <div>
       <Tools />
       <div className='flex'>
         <div className='p-content'>

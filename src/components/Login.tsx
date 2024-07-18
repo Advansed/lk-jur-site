@@ -7,126 +7,25 @@ import 'react-dadata/dist/react-dadata.css';
 import { Files, toPDF } from "./Files";
 
 export function Login( ):JSX.Element {
-    const [ info, setInfo] = useState({ login: "", password: ""})
-    const [ upd, setUpd] = useState(0)
-    const [ reg, setReg] = useState( Store.getState().reg )
-    const [ load, setLoad] = useState( false)
-    const [ message, setMessage] = useState<any>()
+    const [ reg,        setReg]     = useState( Store.getState().reg )
     
     Store.subscribe({ num: 61, type: "reg", func: ()=>{
         setReg( Store.getState().reg ) 
-    }})
-
-    Store.subscribe({ num: 62, type: "message", func: ()=>{
-        setMessage( Store.getState().message ) 
     }})
 
     useEffect(()=>{
         setReg( Store.getState().reg ) 
         return ()=>{
             Store.unSubscribe( 61 )
-            Store.unSubscribe( 62 )
         }
     },[])
 
 
-    async function Auth() {
-        setLoad( true)
-        if (info?.password === "" || info?.login === "") {
-            console.log( info )
-            info.login = "";info.password = ""
-            setInfo(info)      
-            setMessage({ header: "Проверка", message: "Заполните все поля!" });
-        } else {
-
-            const  res = await getData("jur_login", info)
-            console.log(res)
-            if(!res.error){
-                Store.dispatch({type: "login", login: res.data})    
-                Store.dispatch({type: "auth", auth: true })
-            } else { 
-
-                info.login = "";info.password = ""
-                setInfo(info)      
-    
-                setUpd(upd + 1);
-            }
-        }
-
-        setLoad(false)
-    }
-
-    const elem = <>
-        <IonLoading isOpen= { load } message={ "Подождите..."}/>
-        <div className="l-content mt-3">
-
-            <div className="l-card pb-1 ml-auto mr-auto">
-                <div className="flex fl-center borders mt-1">
-                    <div className="ml-1 mt-1 pb-1 fs-bold"> 
-                        Еще нет аккаунта?
-                    </div>
-                    <b className="fs-bold a-link" onClick={ ()=> Store.dispatch({ type: "reg", reg: true }) }>Зарегистрируйтесь</b>        
-                </div>
-
-                <div className=" mt-1 pb-2">
-
-                    <div className="flex fl-center">
-                        <img src="assets/logo2.1c3a9d80.svg" alt="" className="mt-2 ml-auto mr-auto"/>
-                    </div>
-
-                    <div className="a-center fs-bold mt-1">Авторизация</div>
-
-                </div>
-
-                <div className="ml-2 mr-2 mt-2 l-bg1 pl-1 pr-1">
-                    <IonInput 
-                        type = "text"
-                        placeholder="Логин"
-                        class="cl-prim fs-bold"
-                        value= { info.login }
-                        onIonChange={(e)=>{
-                            info.login = e.target.value as string;
-                            setInfo(info)
-                        }}
-                    />
-                </div>
-
-                <div className=" flex ml-2 mr-2 mt-1 l-bg1 pl-1 pr-1">
-                    <IonInput 
-                        type = "password"
-                        placeholder="Пароль"
-                        class="cl-prim fs-bold"
-                        value= { info.password }
-                        onIonChange={(e)=>{
-                            info.password = e.target.value as string;
-                            setInfo(info)
-                        }}
-                    />
-                </div>
-
-                <p>{ message }</p>
-
-                <IonButton
-                    className="ml-2 mr-2 mt-1 "
-                    expand="block"
-                    color="tertiary"
-                    mode="ios"
-                    onClick={()=>{
-                        Auth()
-                        console.log("auth")
-                    }}
-                >
-                    Войти
-                </IonButton>
-                    
-            </div>
-    </div>
-    </>
 
     if(reg)
         return <Registration />            
     else
-        return elem
+        return <Authorization />
 
 }
 
@@ -224,7 +123,7 @@ export function Registration():JSX.Element {
         elem = <>
             <IonCard className="l-card-1 pb-1">
                 <div className="ml-2 mt-1 mr-2">
-                    <IonLabel> <b>Введите ИНН</b> </IonLabel>
+                    <IonLabel> <b>Введите свой ИНН</b> </IonLabel>
                     <div className="cl-prim">
                         <PartySuggestions 
                             token="23de02cd2b41dbb9951f8991a41b808f4398ec6e"
@@ -446,7 +345,8 @@ export function Registration():JSX.Element {
     
     const elem = <>
         <IonLoading message = "Подождите" isOpen = { load } />
-        <div className="l-content mt-3">
+        <div className="l-content">
+            <div className="p-page mr-auto ml-auto">
             <IonCard className="l-card-1 mt-2 pb-1">
                 <div className="flex ml-1 mt-1 fs-bold"> У вас уже есть аккаунт? 
                     <span className="t-underline ml-1 cl-yellow"
@@ -475,7 +375,7 @@ export function Registration():JSX.Element {
                     ? <Page2 />
                     : <Page3 />
             }
-
+            </div>
         </div>    
 
         <IonAlert
@@ -508,6 +408,256 @@ export function Registration():JSX.Element {
                 }
             </div>
         </IonModal>
+    </>
+
+    return elem
+}
+
+export function Authorization() {
+    const [ info,       setInfo]    = useState({ login: "", password: "", email: ""})
+    const [ upd,        setUpd]     = useState(0)
+    const [ message,    setMessage] = useState<any>()
+    const [ load,       setLoad]    = useState( false )
+    const [ page,       setPage]    = useState( 0 )
+
+    async function Auth() {
+        setLoad( true)
+        if (info?.password === "" || info?.login === "") {
+            console.log( info )
+            info.login = "";info.password = ""
+            setInfo(info)      
+            setMessage({ header: "Проверка", message: "Заполните все поля!" });
+        } else {
+
+            const  res = await getData("jur_login", info)
+            console.log(res)
+            if(!res.error){
+
+                localStorage.setItem( "stngjur.phone", info.login )
+                localStorage.setItem( "stngjur.pass", info.password )
+
+                Store.dispatch({type: "login", login: res.data})    
+                Store.dispatch({type: "auth", auth: true })
+
+            } else { 
+
+                info.login = "";info.password = ""
+                setInfo(info)      
+    
+                setUpd(upd + 1);
+            }
+        }
+
+        setLoad(false)
+    }
+
+    async function Restore() {
+        setLoad( true)
+        if (info?.email === "" ) {
+            console.log( info )
+            setMessage({ header: "Проверка", message: "Введите эл. почту" });
+        } else {
+
+            const  res = await getData("jur_restore", info)
+            console.log(res)
+            if(!res.error){
+                info.email = ""
+                setMessage( res.message )
+                setPage( 2 )
+
+            } else { 
+                info.email = ""
+                setMessage( res.message )
+                setPage( 3 )
+            }
+        }
+
+        setLoad(false)
+    }
+
+    useEffect(()=>{
+
+        const login = localStorage.getItem("stngjur.phone") 
+        const pass = localStorage.getItem("stngjur.pass") 
+
+        if( login !== null && pass !== null){
+            info.login = login; info.password = pass
+            setInfo( info )
+            //Auth()
+        }   
+
+    },[])
+
+    const elem = <>
+        <IonLoading isOpen= { load } message={ "Подождите..."}/>
+        <div className="l-content">
+            <div className="p-page ml-auto mr-auto">
+            <div className="l-card pb-1 ml-auto mr-auto">
+                <div className="flex fl-center borders mt-1">
+                    <div className="ml-1 mt-1 pb-1 fs-bold"> 
+                        Еще нет аккаунта?
+                    </div>
+            
+                    <b className="fs-bold a-link" onClick={ ()=> Store.dispatch({ type: "reg", reg: true }) }>Зарегистрируйтесь</b>        
+
+                </div>
+            </div>
+            <div>
+                <div className=" mt-1 pb-2">
+
+                    <div className="flex fl-center">
+                        <img src="assets/logo2.1c3a9d80.svg" alt="" className="mt-2 ml-auto mr-auto"/>
+                    </div>
+
+                    <div className="a-center fs-bold mt-1 cl-prim">Авторизация</div>
+
+                </div>
+            </div>
+            {
+                page === 0 ? <>
+                    <div>
+                        <div className="ml-2 mr-2 mt-2 l-bg1 pl-1 pr-1">
+                            <IonInput 
+                                type = "text"
+                                placeholder="Логин"
+                                class="cl-prim fs-bold"
+                                value= { info.login }
+                                onIonChange={(e)=>{
+                                    info.login = e.target.value as string;
+                                    setInfo(info)
+                                }}
+                            />
+                        </div>
+
+                        <div className=" flex ml-2 mr-2 mt-1 l-bg1 pl-1 pr-1">
+                            <IonInput 
+                                type = "password"
+                                placeholder="Пароль"
+                                class="cl-prim fs-bold"
+                                value= { info.password }
+                                onIonChange={(e)=>{
+                                    info.password = e.target.value as string;
+                                    setInfo(info)
+                                }}
+                            />
+                        </div>
+
+                        <p>{ message }</p>
+
+                        <IonButton
+                            className="ml-2 mr-2 mt-1 "
+                            expand="block"
+                            color="tertiary"
+                            mode="ios"
+                            onClick={()=>{
+                                Auth()
+                                console.log("auth")
+                            }}
+                        >
+                            Войти
+                        </IonButton>     
+                        <div>
+                            <IonButton className="l-textURL ion-text-wrap" fill="clear"
+                                onClick={()=>{ setPage( 1 )}}
+                            > Забыли пароль? 
+                            </IonButton>
+                        </div>
+                       
+                    </div>
+                </>
+                :page === 1 ? <>
+                    <div className="cl-prim">
+                        <div className=" flex ml-2 mr-2 mt-1 l-bg1 pl-1 pr-1">
+                            <IonInput 
+                                type = "text"
+                                placeholder="Эл. почта"
+                                class="cl-prim fs-bold"
+                                value= { info.email }
+                                onIonChange={(e)=>{
+                                    info.email = e.target.value as string;
+                                    setInfo(info)
+                                }}
+                            />
+                            
+                        </div>
+
+                        <div className="flex ml-2 mr-2">
+
+                            <IonButton
+                                className="mt-1 w-50"
+                                expand="block"
+                                color="tertiary"
+                                mode="ios"
+                                onClick={()=>{
+                                    setPage( 0 )
+                                }}
+                            >
+                                Отмена
+                            </IonButton>     
+                            <IonButton
+                                className="mt-1 w-50"
+                                expand="block"
+                                color="tertiary"
+                                mode="ios"
+                                onClick={()=>{
+                                    Restore()
+                                }}
+                            >
+                                Отправить
+                            </IonButton>     
+                        </div>
+
+                    </div>
+                </>
+                :page === 2 ? <>
+                    <div>
+                        <IonCard className="bg-1 pb-1">
+                            <div className="ml-1 mt-1 fs-11"> <b>Результат запроса:</b> </div>
+                            <div>
+                                <p className="ml-2 fs-12"> { " - " +  message }</p>  
+                            </div>
+                            <div>
+                                <IonButton
+                                    className="ml-1 mr-1 mt-1 "
+                                    expand="block"
+                                    color="primary"
+                                    mode="ios"
+                                    onClick={()=>{
+                                        setPage(0)
+                                    }}
+                                >
+                                    Закрыть
+                                </IonButton>                                 
+                            </div>
+                        </IonCard>
+                    </div>
+                </>
+                : <>
+                    <div>
+                        <IonCard className="bg-1 pb-1">
+                            <div className="ml-1 mt-1 fs-11"> <b>Что то пошло не так...</b> </div>
+                            <div>
+                                <p className="ml-2 fs-12"> { " - " +  message }</p>  
+                            </div>
+                            <div>
+                                <IonButton
+                                    className="ml-1 mr-1 mt-1 "
+                                    expand="block"
+                                    color="primary"
+                                    mode="ios"
+                                    onClick={()=>{
+                                        setPage(1)
+                                    }}
+                                >
+                                    Закрыть
+                                </IonButton>                                 
+                            </div>
+                        </IonCard>
+                    </div>
+                </>
+            }
+            </div>
+        </div>
     </>
 
     return elem

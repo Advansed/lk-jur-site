@@ -68,9 +68,9 @@ export function Profile(): JSX.Element {
                     case "ФИО"          : elem = <> { elem } <FIO       info = { info.ФИО }/> </>; break;
                     case "Файлы"        : elem = <> { elem } 
                             <div>
-                                <div className='ml-1 mr-1 mt-1 t-underline flex fl-space pb-05'> 
+                                {/* <div className='ml-1 mr-1 mt-1 t-underline flex fl-space pb-05'> 
                                     <div><b> { "Файлы" } </b></div>
-                                </div>
+                                </div> */}
                                 <Filess    info = { info.Файлы.Файлы }/>
                             </div> </>; break;
                     default     : {
@@ -145,9 +145,11 @@ export function Profile(): JSX.Element {
 
     if( info !== undefined ){
         elem  = <>
+            <div className="p-page ml-auto mr-auto">
             <IonCard className="pr-card bg-1">
                 <Pages info = { info } page = { page }/>
             </IonCard>
+            </div>
         </>
     }
     return elem
@@ -211,7 +213,7 @@ function    Address( props: { info }){
 
     const elem = <>
         <div className='ml-2 mt-1 mr-1'>
-            <div className=""> <b>{ props.info.title }</b>  </div>
+            <div className=""> <b>{ info[2] }</b>  </div>
             <div className="flex">
                 <div className="flex s-input ml-1 cl-prim mt-05 w-100"> 
                     <div className="s-address">

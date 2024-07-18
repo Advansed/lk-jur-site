@@ -9,6 +9,7 @@ export function DelAccount(){
         console.log(Store.getState().profile)
     },[])
     const elem = <>
+        <div className="ml-auto mr-auto p-page">
         <IonCard className="s-card ml-auto mr-auto pb-1 pr-1">
             <div className="ml-1 mt-1"><b>Удаление аккаунта</b></div>
             <div className="flex fl-space ml-1 mt-1">
@@ -42,6 +43,7 @@ export function DelAccount(){
                 </IonButton>
             </div>
         </IonCard>
+        </div>
     </>
 
     return elem

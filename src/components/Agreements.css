@@ -28,14 +28,21 @@
     border: 1px solid;
 }
 
+
+.m-content {
+    height: calc(100% - 8em);
+    overflow-y: scroll;
+    overflow-x: scroll;
+}
+
 @media screen and (max-width: 3200px) {
     .a-popover {
         --width: 32em;
         padding-bottom: 1em;
     }
     .a-modal {
-        --width: 40vw;
-        --height: 40vh;
+        --width: 30em;
+        --height: 50em;
         --overflow: auto;  
     }
          
@@ -48,7 +55,7 @@
     }
     .a-modal {
         --width: 90vw;
-        --height: 70vh;
+        --height: 75vh;
         --overflow: auto;  
     }
           

@@ -181,6 +181,11 @@
     padding: 1em;
     position: relative;
 }
+.borders1 {
+    border: 1px solid silver;
+    padding: 1em;
+    position: relative;
+}
 
 .borders-wp {
     border-radius: 0.5em;
@@ -218,6 +223,9 @@
 
 .cl-prim {
     color: #3f64a9;    
+}
+.cl-black {
+    color: black
 }
 
 .p-cursor{

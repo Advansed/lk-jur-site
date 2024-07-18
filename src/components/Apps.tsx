@@ -413,7 +413,9 @@ export function Apps():JSX.Element {
     }
 
     return <>
-        { elem }
+        <div className="p-page ml-auto mr-auto">
+            { elem }
+        </div>
     </>
 }
 

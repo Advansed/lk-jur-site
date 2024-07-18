@@ -49,6 +49,7 @@ export function ActSverki():JSX.Element {
     }
     const elem = <>
         <IonLoading isOpen={ load } message= "Подождите..."/>
+        <div className="mr-auto ml-auto p-page">
         <div className="w-95 h-80">
             <div className="flex fl-space ml-1 mt-1">
                 <IonButton
@@ -98,6 +99,7 @@ export function ActSverki():JSX.Element {
                     </>
             }
 
+        </div>
         </div>
         <IonModal
             className="a-modal"

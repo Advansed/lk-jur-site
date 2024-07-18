@@ -411,11 +411,12 @@ export function Agreements():JSX.Element {
     }
 
     const elem = <>
-        <div>
-            <IonLoading isOpen = { load } message= "Подождите"/>
-            { items }  
+        <div className="p-page ml-auto mr-auto">
+            <div>
+                <IonLoading isOpen = { load } message= "Подождите"/>
+                { items }  
+            </div>
         </div>
-
         <IonModal
             isOpen={ messages.length > 0}
             onDidDismiss={() => setMessages([])}            
