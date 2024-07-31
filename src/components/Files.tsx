@@ -4,15 +4,13 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { cameraOutline, playSkipBackCircleOutline, sendOutline } from "ionicons/icons";
 import { jsPDF } from "jspdf";
 import { FilePicker } from '@capawesome/capacitor-file-picker';
-import { MobilePDFReader } from 'react-read-pdf';
 import { IonButton, IonChip, IonIcon, IonLoading, IonModal, isPlatform } from "@ionic/react";
-import { Document, Page } from 'react-pdf';
-import { pdfjs } from 'react-pdf';
 import { Store, getData } from "./Store";
+import { Viewer, Worker } from '@react-pdf-viewer/core';
+import { RenderCurrentScaleProps, RenderZoomInProps, RenderZoomOutProps, zoomPlugin } from '@react-pdf-viewer/zoom';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
-
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/zoom/lib/styles/index.css';
 
 defineCustomElements(window)
 
@@ -192,71 +190,97 @@ export function         Files(props: { info }) {
     return elem
 }
 
+
 export function         PDFDoc( props ){
-    const [ pages, setPages ] = useState<any>(1)
+    const [ pages ] = useState<any>(1)
     const [ page, setPage ] = useState(1)
-    const [ width, setWidth ] = useState( 380 )
-    const [ height, setHeight ] = useState( 190 )
     const [ message, setMessage ] = useState("")
+
+    const zoomPluginInstance = zoomPlugin();
+    const { CurrentScale, ZoomIn, ZoomOut } = zoomPluginInstance;
+
+    const base64toBlob = (data: string) => {
+        
+        const jarr = data.split(",")
+
+        const base64WithoutPrefix = jarr[1] //data.substr('data:application/pdf;base64,'.length);
+    
+        const bytes = atob(base64WithoutPrefix);
+
+        let length = bytes.length;
+        const out = new Uint8Array(length);
+    
+        while (length--) {
+            out[length] = bytes.charCodeAt(length);
+        }
+    
+        return new Blob([out], { type: 'application/pdf' });
+    };
+
+    const blob = base64toBlob( props.url );
+    const url = URL.createObjectURL(blob);
+
     return <>
         <div className="h-3 pl-2 w-100 bg-2 flex">
             <div>PDF view</div>
             <div className="ml-1">
-                <IonButton
-                    onClick={()=>{ setWidth( width - 50 )}}
-                >-</IonButton>
+                <ZoomOut>
+                    {(props: RenderZoomOutProps) => (
+                        <IonButton
+                            onClick={props.onClick}
+                        >
+                            -
+                        </IonButton>
+                    )}
+                </ZoomOut>
             </div>
             <div className="ml-1">
-                <IonButton
-                    onClick={()=>{ setWidth( width + 50 )}}
-                >+</IonButton>
+                <CurrentScale>
+                    {(props: RenderCurrentScaleProps) => <>{`${Math.round(props.scale * 100)}%`}</>}
+                </CurrentScale>
+            </div>
+            <div className="ml-1">
+                <ZoomIn>
+                    {(props: RenderZoomInProps) => (
+                        <IonButton
+                            onClick={props.onClick}
+                        >
+                            +
+                        </IonButton>
+                    )}
+                </ZoomIn>
             </div>
             <div className="ml-1">
                 <IonButton
                     /* eslint-disable */
                     onClick={()=>{ 
                         async function send() {
-                            console.log( Store.getState().profile )
-                            const res = await getData('jur_sendmail', {
+                            const res = await getData('SendMail', {
                                 token: Store.getState().login.token,
                                 type: props.title,
                                 name: props.name,
-                                email: Store.getState().profile.Логин.элПочта[0],
+                                email: Store.getState().profile.email,
                                 image: props.url,
                             } )
-
                             setMessage(res.message)
-
                         }
                         send()
                     }}
                 ><IonIcon icon = { sendOutline }/></IonButton>
             </div>
         </div>
-        <p className="m-stack fs-bold fs-2 cl-prim ml-2">{ message }</p>
-        <div className="m-content scroll"> 
-            <Document 
-                file={ props.url } 
-                
-                onLoadSuccess={( pdfInfo )=>{ setPages( pdfInfo._pdfInfo.numPages );  console.log(pdfInfo._pdfInfo)}}
-            >
-                <Page renderTextLayer = { false } renderAnnotationLayer = { false } pageNumber={ page } width={ width } height={ height }/>
-            </Document>
-        </div>
-        <div className="h-3 bg-2 pl-1 pr-1 flex fl-space">
-            
-            <IonButton
-                onClick={()=>{if(page > 1 ) setPage(page - 1)}}
-            > Назад </IonButton>
-
-            <div>
-                { "страница " + page + " из " + pages }
-            </div>
-
-            <IonButton
-                onClick={()=>{if(page < pages ) setPage(page + 1)}}
-            > Вперед </IonButton>
-
+        <p className="m-stack fs-bold fs-2 cl-prim">{ message }</p>
+        <div className="f-scroll"> 
+            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.js">
+                <div>
+                    <Viewer
+                        fileUrl={ url }
+                        plugins={[
+                            zoomPluginInstance,
+                        ]}
+                    />
+                </div>
+            </Worker>
         </div>
     </>
 }

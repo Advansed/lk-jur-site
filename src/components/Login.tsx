@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { Store, getData } from "./Store"
 import "./Login.css"
-import { IonAlert, IonButton, IonCard, IonCheckbox, IonChip, IonInput, IonLabel, IonLoading, IonModal } from "@ionic/react"
+import { IonAlert, IonButton, IonCard, IonCheckbox, IonChip, IonInput, IonLabel, IonLoading, IonModal, isPlatform } from "@ionic/react"
 import { PartySuggestions  } from 'react-dadata';
 import 'react-dadata/dist/react-dadata.css';
 import { Files, toPDF } from "./Files";
@@ -345,7 +345,7 @@ export function Registration():JSX.Element {
     
     const elem = <>
         <IonLoading message = "Подождите" isOpen = { load } />
-        <div className="l-content">
+        <div className={ isPlatform("ios") ? "l-content mt-3" : "l-content" }>
             <div className="p-page mr-auto ml-auto">
             <IonCard className="l-card-1 mt-2 pb-1">
                 <div className="flex ml-1 mt-1 fs-bold"> У вас уже есть аккаунт? 
@@ -490,7 +490,7 @@ export function Authorization() {
 
     const elem = <>
         <IonLoading isOpen= { load } message={ "Подождите..."}/>
-        <div className="l-content">
+        <div className={ isPlatform("ios") ? "l-content mt-3" : "l-content" }>
             <div className="p-page ml-auto mr-auto">
             <div className="l-card pb-1 ml-auto mr-auto">
                 <div className="flex fl-center borders mt-1">

@@ -3,6 +3,7 @@ import { Store, getData } from "./Store"
 import { IonButton, IonIcon,  IonInput, IonLoading, IonModal, isPlatform } from "@ionic/react"
 import { MobilePDFReader } from 'react-read-pdf';
 import { mailUnreadOutline } from "ionicons/icons";
+import { PDFDoc } from "./Files";
 
 export function ActSverki():JSX.Element {
     const[  info, setInfo] = useState({
@@ -66,35 +67,7 @@ export function ActSverki():JSX.Element {
                     ? <></>
                     : <>
                         <div className="ml-1 mt-1">
-                            <img  src = { "assets/pdf.png" } alt="" className="w-4 h-4 ml-1 mt-1 s-point"
-                                onClick = {()=>{ setModal( true ) }}
-                            />
-                            {
-                                message === "" 
-                                    ? <>
-                                        <div className="flex fl-space ml-1 mt-2 borders-wp">
-                                            <IonInput
-                                                className="ml-1 cl-prim"
-                                                placeholder="email"
-                                                value={ info.email }
-                                                onIonChange={(e)=>{
-                                                    info.email = e.detail.value
-                                                    setInfo( info )
-                                                }}
-                                            />    
-                                            <IonIcon icon = { mailUnreadOutline } className="ml-1 w-3 h-3 p-cursor" color="tertiary" 
-                                                onClick={()=>{
-                                                    sendMail()
-                                                }}
-                                            />  
-                                        </div>                                    
-                                    </>
-                                    : <>
-                                        <div className="cl-prim ml-1 mt-1">
-                                            <p>{ message }</p>
-                                        </div>
-                                    </>
-                            }
+                            <PDFDoc url = { info.image } name = { "Квитанция" } title = { "Квитанция" }/>
                         </div>
                     </>
             }

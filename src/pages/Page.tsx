@@ -1,4 +1,4 @@
-import { IonButton, IonButtons, IonIcon, IonMenuButton } from '@ionic/react';
+import { IonButton, IonButtons, IonIcon, IonMenuButton, isPlatform } from '@ionic/react';
 import React from 'react';
 import { useHistory, useParams } from 'react-router';
 import './Page.css';
@@ -141,7 +141,7 @@ const Page: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className={ isPlatform("ios") ? 'mt-3' : "" }>
       <Tools />
       <div className='flex'>
         <div className='p-content'>
