@@ -1566,22 +1566,6 @@ function Info2() {
                                         Подтверждающие документы (копия свидетельств ИНН, ОГРН, приказ о назначении директора)
                                     </p>
                                 </div>
-                                <div className="flex">
-                                    <div className="in-w1">
-                                        <IonIcon icon = { checkmarkCircleOutline }  className="w-15 h-15"/>
-                                    </div>
-                                    <p className="in-w2">
-                                        Письмо с указанием причин изменения реквизитов на фирменном бланке 
-                                    </p>
-                                </div>
-                                <div className="flex">
-                                    <div className="in-w1">
-                                        <IonIcon icon = { checkmarkCircleOutline }  className="w-15 h-15"/>
-                                    </div>
-                                    <p className="in-w2">
-                                        Письмо с указанием причин изменения реквизитов на фирменном бланке 
-                                    </p>
-                                </div>
                             </div>
 
                         </>
@@ -1884,11 +1868,11 @@ function Info3() {
                                 <div> с 08:00 до 18:00</div>
                                 <div>Обед: с 12:00 до 13:00</div>
                             </IonCol>
-                        </IonRow>\                   
+                        </IonRow>                   
                     </div>
                 </div>
 
-                <p className="cl-red fs-3"><b>ЧТО БУДЕТ, ЕСЛИ НЕ ПЛАТИТЬ ЗА ГАЗ:</b></p>
+                <p className="cl-red fs-12"><b>ЧТО БУДЕТ, ЕСЛИ НЕ ПЛАТИТЬ ЗА ГАЗ:</b></p>
 
                 <img src="assets/shtraf1.png" alt="graph1" className="i-img1"/> 
 

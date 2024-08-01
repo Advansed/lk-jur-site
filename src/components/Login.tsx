@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Store, getData } from "./Store"
+import { Store, getData, version } from "./Store"
 import "./Login.css"
 import { IonAlert, IonButton, IonCard, IonCheckbox, IonChip, IonInput, IonLabel, IonLoading, IonModal, isPlatform } from "@ionic/react"
 import { PartySuggestions  } from 'react-dadata';
@@ -414,7 +414,7 @@ export function Registration():JSX.Element {
 }
 
 export function Authorization() {
-    const [ info,       setInfo]    = useState({ login: "", password: "", email: ""})
+    const [ info,       setInfo]    = useState({ login: "", password: "", email: "", version: version, mode: "android"})
     const [ upd,        setUpd]     = useState(0)
     const [ message,    setMessage] = useState<any>()
     const [ load,       setLoad]    = useState( false )

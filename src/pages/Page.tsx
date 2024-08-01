@@ -144,7 +144,7 @@ const Page: React.FC = () => {
     <div className={ isPlatform("ios") ? 'mt-3' : "" }>
       <Tools />
       <div className='flex'>
-        <div className='p-content'>
+        <div className={ isPlatform("ios") ? 'p-content-ios' : "p-content" }>
           { Contents().JSX() }
         </div>
       </div>

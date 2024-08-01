@@ -6,6 +6,7 @@ import {
   IonLabel,
   IonMenu,
   IonMenuToggle,
+  isPlatform,
 } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
@@ -77,7 +78,7 @@ const Menu: React.FC = () => {
   return (
     <IonMenu contentId="main" type="overlay">
         <div id="inbox-list">
-          <IonImg src = "assets/stng_logo1.svg"  class = "m-img mt-2"
+          <IonImg src = "assets/stng_logo1.svg"  class = { isPlatform("ios") ? "m-img mt-4" : "m-img mt-2" }
               onClick= {()=>{
                 Store.dispatch({ type: "route", route: "main"})
               }}

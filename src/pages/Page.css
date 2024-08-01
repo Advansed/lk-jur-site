@@ -29,6 +29,18 @@
     border-left: 1px solid silver;
 }
 
+.p-content-ios {
+
+    height: calc(100vh - 7em);
+    width: 100vw;
+    overflow-y:scroll;
+    background: url('pattern.png'), linear-gradient(156.39deg, #f5f5f5 7.75%, #ffffff 100.99%); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom;
+  
+}
+
 .p-content {
 
     height: calc(100vh - 4em);
