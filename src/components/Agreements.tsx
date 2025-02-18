@@ -29,10 +29,8 @@ interface i_agree {
 
 export function Agreements():JSX.Element {
     const [ info,       setInfo]        = useState<any>([])
-    const [ invoices,   setInvoices]    = useState<any>([])
     const [ messages,   setMessages]    = useState<any>([])
     const [ load,       setLoad ]       = useState( false );    
-    const [ invoice,    setInvoice ]    = useState("");
 
     function Item(props:{ info }):JSX.Element {
         const [ page, setPage ] = useState( true )
@@ -73,6 +71,7 @@ export function Agreements():JSX.Element {
             }
 
             if(param.agreements[0].objects.length > 0) { 
+                console.log( param )
                 const res = await getData("jur_indications", param )
                 console.log(res)
                 let arr: any = []
@@ -204,135 +203,6 @@ export function Agreements():JSX.Element {
             return elem
         }
 
-
-        function Invoices(props: { invoices }):JSX.Element {
-            const invoices = props.invoices;
-            let elem  = <>
-                <div>
-                </div>
-            </>
-
-
-            function Mail(props: { id }) {
-                const [ mail, setMail ] = useState( "" )
-
-                useEffect(()=>{
-                    setMail(Store.getState().profile.Логин.элПочта[0])
-                },[])
-
-                async function sendMail(id){
-                    setLoad( true)
-                    let res = await getData("jur_invoice_image", {
-                        token : Store.getState().login.token,
-                        id: id,
-                    })
-                    console.log( id )
-                    if(!res.error) {
-                        res = await getData('jur_sendMail', {
-                            token: Store.getState().login.token,
-                            type: "Квитанция",
-                            name: "Kvitok",
-                            email: mail,
-                            image: res.data,
-                        } )
-                        if(!res.error)
-                            setMessages( [{name: "", error: false, message: "Квитанция успешно отправлена на почту"}])
-                        else 
-                        setMessages( [{name: "", error: true, message: "Не получилось отправить квитанцию"}])
-                    } else setMessages( [{name: "", error: true, message: "Не удалось сформировать квитанцию"}])
-    
-                    setLoad( false)
-                }
-
-                const elem = <>
-                    <div className="pb-1">
-                        <div className="flex fl-space ml-1 mr-1 borders-wp">
-                            <IonInput
-                                className="ml-1 cl-prim"
-                                placeholder="email"
-                                value={ mail }
-                                onIonChange={(e)=>{
-                                    setMail( e.detail.value as string );
-                                }}
-                            />    
-                            <IonIcon icon = { mailUnreadOutline } className="ml-1 w-3 h-3 p-cursor" color="tertiary" 
-                                onClick={()=>{
-                                    sendMail( props.id )
-                                }}
-                            />  
-                        </div>
-                    </div>
-                </>
-
-                return elem
-            }
-
-            async function getImg( id: string) {
-                setLoad(true)
-                const res = await getData("jur_invoice_image", {
-                    token : Store.getState().login.token,
-                    id: id,
-                })
-                console.log( id )
-                if(!res.error) setInvoice( res.data )
-                setLoad(false)
-            }
-            
-            for(let i = 0; i < invoices.length; i++) {
-                if( invoices[i].agreement.id === info.id)
-                    elem = <>
-                        { elem }
-                        <div className="mt-1 t-underline flex fl-space"> <b> Выставленный счет </b> <b> { invoices[i].number} </b></div>
-                        <div className="mt-1 ml-1 flex">
-                            <div className="w-40 flex">
-                                <IonButton
-                                    className="w-80 h-80"
-                                    fill = "clear"
-                                    id      = { "trig-button" + i.toString() }
-                                >
-                                    <IonImg src="assets/extBill.png" alt="download bill" className="a-img"/>
-                                </IonButton>
-                                <IonPopover
-                                    trigger         = { "trig-button" + i.toString() }
-                                    triggerAction   = 'click'
-                                    className="a-popover"
-                                >
-                                    <IonContent className = "pb-1">
-                                        <div className='flex fl-space ml-2  mr-1 h-4'
-                                            onClick={()=>{
-                                                getImg( invoices[i].id )
-                                            }}                                
-                                        >
-                                            <div>Просмотр</div>
-                                            <IonButton
-                                                fill = "clear"
-                                            >
-                                                <IonIcon icon = { newspaperOutline } slot='icon-only'/>
-                                            </IonButton>
-                                        </div>
-                                        <Mail id = { invoices[i].id }/>
-                                    </IonContent>
-                                </IonPopover>                                
-                            </div>
-                            <div className="w-70">
-                                <div className="flex fl-space">
-                                    <span>Дата</span>
-                                    { invoices[i].date}
-                                </div>
-                                <div className="flex fl-space mt-1">
-                                    <span>Сумма</span>
-                                    { 
-                                        new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format( invoices[i].summ  )
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </>
-            }
-
-            return elem
-        }
-    
     
         const elem = <>
             <IonCard className="a-card">
@@ -353,7 +223,7 @@ export function Agreements():JSX.Element {
                 </div>
                     {   
                         page  
-                            ? <Invoices invoices = { invoices }/>
+                            ? <></>
                             : <Objects info = { info }/> 
                     }
                 <div className="flex fl-space mt-1">
@@ -362,7 +232,7 @@ export function Agreements():JSX.Element {
                             onClick={()=> setPage( !page )}
                         >
                             <IonIcon  icon = { listCircleOutline } slot="icon-only"/>
-                            <IonLabel class="ml-1"> { page ? "Объекты" : "Счета" } </IonLabel>
+                            <IonLabel class="ml-1"> { page ? "Показания" : "Закрыть" } </IonLabel>
                         </IonButton>
                     </div>
                     <div>
@@ -376,7 +246,7 @@ export function Agreements():JSX.Element {
                             }}
                         >
                             <IonIcon  icon = { saveOutline } slot="icon-only"/>
-                            <IonLabel class="ml-1"> Отправить показания </IonLabel>
+                            <IonLabel class="ml-1"> Отправить </IonLabel>
                         </IonButton>
                     </div>
                 </div>
@@ -389,16 +259,13 @@ export function Agreements():JSX.Element {
         setInfo( Store.getState().dogs)
     }})
 
-    Store.subscribe({num: 12, type: "invoices", func: ()=>{
-        setInvoices( Store.getState().invoices)
-    }})
 
     useEffect(()=>{
         setInfo( Store.getState().dogs)
-        setInvoices( Store.getState().invoices)
+        console.log("useeffect")
+        console.log(Store.getState().invoices)
         return ()=>{
             Store.unSubscribe( 11 )
-            Store.unSubscribe( 12 )
         }
     },[])
 
@@ -436,23 +303,6 @@ export function Agreements():JSX.Element {
                     return elem
                 }) 
             }
-        </div>
-        </IonModal>
-        
-        <IonModal
-            isOpen={ invoice !== "" }
-            onDidDismiss={() => setInvoice( "" )}            
-            className="a-modal"
-      >
-        <div className="w-100 h-100">
-                {  
-                    isPlatform("ios")
-                        ? <MobilePDFReader url={ invoice }/> 
-                        :  isPlatform("android")
-                            ? <MobilePDFReader url={ invoice }/> 
-                            : <iframe title="pdf" src = { invoice } className="w-100 h-100"/>
-                }
-            <iframe title="pdf" src = { invoice } className="w-100 h-100"/>
         </div>
         </IonModal>
         

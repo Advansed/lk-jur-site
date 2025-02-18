@@ -17,6 +17,7 @@ export const i_state = {
     dog2:                               "",
     payments:                           [],
     invoices:                           [],
+    docs:                               [],
     apps:                               [],
     profile:                            "",
     actsverki:                          "",
@@ -178,7 +179,6 @@ return res
 export async function getDogs(){
     const info = Store.getState().login
     const res = await getData("jur_info", info )
-    console.log(res)
     if(!res.error) {
         Store.dispatch({ type: "dogs", dogs: res.data })
     } else Store.dispatch({ type: "dogs", dogs: [] })
@@ -196,16 +196,26 @@ export async function getPayments(){
 
 export async function getInvoices(){
     const info = Store.getState().login
-    const res = await getData("jur_invoices", info )
+    let res = await getData("jur_invoices", info )
+    console.log("invoices")
+    console.log(res)
     if(!res.error) {
         Store.dispatch({ type: "invoices", invoices: res.data })
     } else Store.dispatch({ type: "invoices", invoices: [] })
+
+    res = await getData("jur_documents", info )
+    console.log("documents")
+    console.log(res)
+    if(!res.error) {
+        Store.dispatch({ type: "docs", docs: res.data })
+    } else Store.dispatch({ type: "docs", docs: [] })
 
 }
 
 export async function getProfile(){
     const info = Store.getState().login
     const res = await getData("jur_profile1", info )
+    console.log("profile")
     console.log(res)
     if(!res.error) {
         Store.dispatch({ type: "profile", profile: res.data })
@@ -217,7 +227,7 @@ export async function getServices(){
     const res = await getData("jur_services", {
         token: Store.getState().login.token
     })
-    console.log(res)
+  //  console.log(res)
     if(!res.error) {
         Store.dispatch({ 
             type: "services", services: res.data 
@@ -230,7 +240,7 @@ export async function getServices(){
 export async function getHistory(){
     const info = Store.getState().login
     const res = await getData("jur_history", info )
-    console.log( res )
+//    console.log( res )
     if(!res.error) {
         Store.dispatch({ type: "apps", apps: res.data })
     } else Store.dispatch({ type: "apps", apps: [] })

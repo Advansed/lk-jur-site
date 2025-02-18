@@ -1,7 +1,8 @@
 import { IonCard, IonIcon, IonText } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import { getData } from "./Store";
-import { callSharp, chevronDownOutline, chevronUpOutline, homeOutline, homeSharp, mailOpen, mailOpenSharp } from "ionicons/icons";
+import { callSharp, chevronDownOutline, chevronUpOutline, homeSharp, mailOpenSharp } from "ionicons/icons";
+import './contacts.css'
 
 export function Contacts(){
     const [ info, setInfo ] = useState<any>()

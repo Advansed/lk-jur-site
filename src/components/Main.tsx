@@ -13,7 +13,7 @@ export function Hello():JSX.Element {
                 <IonText color={"tertiary"}> Теперь вы сможете экономить время и совершать следующие действия в любое время дня и ночи из любой точки мира: </IonText>
             </p>
             <p className="ml-3">
-                <IonText color={"tertiary"}> - оперативано передавать данные о фактическом потреблении газа</IonText>
+                <IonText color={"tertiary"}> - оперативно передавать данные о фактическом потреблении газа</IonText>
             </p>
             <p className="ml-3">
                 <IonText color={"tertiary"}> - контролировать текущую задолженность за газ</IonText>

@@ -51,7 +51,7 @@ export function Profile(): JSX.Element {
                 }
             }
         }
-
+        console.log("mdode")
         console.log( mode )
 //        const res = await getData("jur_profile1", mode )
  //       console.log(res)

@@ -53,7 +53,7 @@ const appPages: AppPage[] = [
     mdIcon: personCircleSharp
   },
   {
-    title: 'Акт сверки',
+    title: 'Документы',
     url: '/page/actsverki',
     iosIcon: calendarOutline,
     mdIcon: calendarSharp
@@ -64,6 +64,7 @@ const appPages: AppPage[] = [
     iosIcon: chatboxEllipsesOutline,
     mdIcon: chatboxEllipsesSharp
   },
+
   {
     title: 'Удалить аккаунт',
     url: '/page/delaccount',
