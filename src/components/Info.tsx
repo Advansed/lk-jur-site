@@ -1909,17 +1909,17 @@ function Info4() {
                 <p > <b>Тарифы на природный газ для потребителей – юридических лиц, действующие с 01.07.2024 г.</b></p>
                 <p>
                     {
-                        'В соответствии с Приказами ФАС России №909/23 от 28.11.2023 г. «Об утверждении оптовых цен на газ», №775/22 от 31.10.2022 г. «Об утверждении размера платы за снабженческо-сбытовые услуги, оказываемые потребителям газа ' +
-                        'АО «Сахатранснефтегаз» на территории Республики Саха (Якутия) (кроме Ленского района), №828/22 от 16.11.2022 г. «Об утверждении тарифов на услуги по транспортировке газа по газораспределительным сетям АО «Сахатранснефтегаз» ' +
-                        'на территории Республики Саха (Якутия) (кроме Ленского района) и постановлением ГКЦ РС(Я) №149 от 15.12.2023 г. «Об установлении специальной надбавки к тарифам на услуги по транспортировке природного газа по газораспределительным ' +
+                        'В соответствии с Приказами ФАС России №1008/24 от 13.12.2024 г. «Об утверждении оптовых цен на газ», №775/22 от 31.10.2022 г. «Об утверждении размера платы за снабженческо-сбытовые услуги, оказываемые потребителям газа ' +
+                        'АО «Сахатранснефтегаз» на территории Республики Саха (Якутия) (кроме Ленского района), №1005/24 от 13.12.2024 г. «Об утверждении тарифов на услуги по транспортировке газа по газораспределительным сетям АО «Сахатранснефтегаз» ' +
+                        'на территории Республики Саха (Якутия) (кроме Ленского района) и постановлением ГКЦ РС(Я) №283 от 20.12.2024 г. «Об установлении специальной надбавки к тарифам на услуги по транспортировке природного газа по газораспределительным ' +
                         'сетям АО «Сахатранснефтегаз» в Республике Саха (Якутия) (кроме Ленского района) изменена цена на газ для юридических лиц.'
                     }
                 </p>
-                <p> <b>Цена природного газа, добываемого ПАО «ЯТЭК», для потребителей – юридических лиц с 01.07.2024 г. составляет:</b></p>
+                <p> <b>Цена природного газа, добываемого ПАО «ЯТЭК», для потребителей – юридических лиц с 01.07.2025 г. составляет:</b></p>
 
-                <div className="borders1">
+                {/* <div className="borders1">
                     Исключающая группа (для Потребителей, указанных в столбце 9 приложения к Приказу ФАС от 28.11.2023 г. №909/23)
-                </div>
+                </div> */}
                 <IonRow>
                     <IonCol className="w-40 borders1" size="5" >
                         Годовое потребление по точкам подключения к газораспределительным сетям
@@ -1939,7 +1939,7 @@ function Info4() {
                         1 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 086,44
+                        7 404,84
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -1950,7 +1950,7 @@ function Info4() {
                         2 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 086,73
+                        7 408,14
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -1961,7 +1961,7 @@ function Info4() {
                         3 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 302,77
+                        7 647,99
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -1972,7 +1972,7 @@ function Info4() {
                         4 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 567,18
+                        7 941,07
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -1983,7 +1983,7 @@ function Info4() {
                         5 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 568,93
+                       7 943,01
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -1994,7 +1994,7 @@ function Info4() {
                         6 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 575,48
+                        7 950,30
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -2005,87 +2005,7 @@ function Info4() {
                         7 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 602,49
-                    </IonCol>
-                </IonRow>
-                <div className="borders1">
-                    Прочие потребители (для Потребителей, указанных в столбце 10 приложения к Приказу ФАС от 28.11.2023 г. №909/23
-                </div>
-                <IonRow>
-                    <IonCol className="w-40 borders1" size="5">
-                        св. 500 млн.м3
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="3">
-                        1 группа
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="4">
-                        6 572,98
-                    </IonCol>
-                </IonRow>
-                <IonRow>
-                    <IonCol className="w-40 borders1" size="5">
-                        от 100 до 500 млн.м3
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="3">
-                        2 группа
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="4">
-                        6 573,27
-                    </IonCol>
-                </IonRow>
-                <IonRow>
-                    <IonCol className="w-40 borders1" size="5">
-                        от 10 до 100 млн.м3
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="3">
-                        3 группа
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="4">
-                        6 789,31
-                    </IonCol>
-                </IonRow>
-                <IonRow>
-                    <IonCol className="w-40 borders1" size="5">
-                        от 1 до 10 млн.м3
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="3">
-                        4 группа
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="4">
-                        7 053,72
-                    </IonCol>
-                </IonRow>
-                <IonRow>
-                    <IonCol className="w-40 borders1" size="5">
-                        от 100 до 1 000 тыс.м3
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="3">
-                        5 группа
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="4">
-                        7 055,47
-                    </IonCol>
-                </IonRow>
-                <IonRow>
-                    <IonCol className="w-40 borders1" size="5">
-                        от 10 до 100 тыс.м3
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="3">
-                        6 группа
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="4">
-                        7 062,02
-                    </IonCol>
-                </IonRow>
-                <IonRow>
-                    <IonCol className="w-40 borders1" size="5">
-                        ниже 10 тыс.м3
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="3">
-                        7 группа
-                    </IonCol> 
-                    <IonCol className="w-30 borders1" size="4">
-                        7 089,03
+                        7 980,37
                     </IonCol>
                 </IonRow>
 
@@ -2110,7 +2030,7 @@ function Info4() {
                         5 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 326,95
+                        6 918,90
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -2121,7 +2041,7 @@ function Info4() {
                         6 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 333,50
+                        6 926,19
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -2132,7 +2052,7 @@ function Info4() {
                         7 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 360,51
+                        6 956,26
                     </IonCol>
                 </IonRow>
 
