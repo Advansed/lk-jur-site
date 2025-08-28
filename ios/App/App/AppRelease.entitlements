@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.io.stng.lkul.onesignal</string>
+		<string>group.stng.lkul.Signal</string>
 	</array>
 </dict>
 </plist>
