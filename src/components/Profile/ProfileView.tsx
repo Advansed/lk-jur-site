@@ -1,34 +1,27 @@
 import React, { useEffect, useState } from "react"
-import { Store } from "./Store"
-import "./Profile.css"
+import { useProfile, getLoginToken } from "./useProfile"
+import "./profile.css"
 import { IonButton, IonCard, IonIcon, IonInput, IonModal } from "@ionic/react"
 import { AddressSuggestions, FioSuggestions } from "react-dadata"
 import { arrowBackCircleOutline, listOutline } from "ionicons/icons"
-import MaskedInput from "../mask/reactTextMask"
-import { Filess } from "./Files"
+import MaskedInput from "../../mask/reactTextMask"
+import { Filess } from "../Files"
 import Select from "react-tailwindcss-select";
 import SignatureCanvas from 'react-signature-canvas'   
 
 export function Profile(): JSX.Element {
-    const [ info, setInfo ] = useState<any>( Store.getState().profile )
+    const { profile } = useProfile()
+    const [ info, setInfo ] = useState<any>( profile )
     const [ mode ] = useState<any>( new Object() )
     const [ page, setPage ] = useState( 1 )
 
-
-    Store.subscribe({num: 41, type: "profile", func: ()=>{
-        setInfo( Store.getState().profile )
-    }})
-
     useEffect(()=>{
-        setInfo( Store.getState().profile )
-        return ()=>{
-            Store.unSubscribe( 41 )
-        }
-    },[])
+        setInfo( profile )
+    },[profile])
 
 
     async function Save(){
-        mode.token = Store.getState().login.token
+        mode.token = getLoginToken()
         console.log( info )
         mode.Файлы = undefined
         for(const [ key ] of Object.entries(info)){
@@ -58,8 +51,12 @@ export function Profile(): JSX.Element {
     }
 
     function Pages( props:{ info, page }){
-        const [ info, setInfo ] = useState( props.info )
+        const info = props.info
         let elem = <></>
+
+        if (!info) {
+            return <></>
+        }
 
         for(const [ key ] of Object.entries(info)){
             if( info[key].Страница === props.page ) {
@@ -143,7 +140,7 @@ export function Profile(): JSX.Element {
 
     let elem = <></>
 
-    if( info !== undefined ){
+    if( info ){
         elem  = <>
             <div className="p-page ml-auto mr-auto">
             <IonCard className="pr-card bg-1">

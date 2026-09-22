@@ -1,11 +1,12 @@
 import { IonButton, IonCard, IonCol, IonIcon, IonInput, IonModal, IonRow, isPlatform } from "@ionic/react"
 import React, { useEffect, useState } from "react"
-import { Store, getData } from "./Store";
+import { Store } from "../Store";
+import { loadTemplate1 } from "./useInfo";
 import { checkmarkCircleOutline, chevronDownOutline, chevronUpOutline, removeCircleOutline, removeOutline } from "ionicons/icons";
 import { MobilePDFReader } from 'react-read-pdf';
 
-import "./Info.css"
-import { PDFDoc } from "./Files";
+import "./info.css"
+import { PDFDoc } from "../Files";
 
 
 export function Info() {
@@ -1583,9 +1584,11 @@ function Info2() {
         const [ modal, setModal] = useState( false)
 
         async function Load() {
-            const res = await getData("jur_template1", {})
-            setInfo( res.data )
-            setModal( true)
+            const data = await loadTemplate1()
+            if (data) {
+                setInfo( data )
+                setModal( true)
+            }
         }
 
         const elem = <>
@@ -1906,20 +1909,16 @@ function Info4() {
         <IonCard className="bg-2 pb-1">
             <div className="ml-2 mt-1 fs-3 a-center"> <b>Тарифы на природный газ</b> </div>   
             <div className="ml-2 mr-1 fs-12">
-                <p > <b>Тарифы на природный газ для потребителей – юридических лиц, действующие с 01.07.2024 г.</b></p>
                 <p>
                     {
-                        'В соответствии с Приказами ФАС России №1008/24 от 13.12.2024 г. «Об утверждении оптовых цен на газ», №775/22 от 31.10.2022 г. «Об утверждении размера платы за снабженческо-сбытовые услуги, оказываемые потребителям газа ' +
-                        'АО «Сахатранснефтегаз» на территории Республики Саха (Якутия) (кроме Ленского района), №1005/24 от 13.12.2024 г. «Об утверждении тарифов на услуги по транспортировке газа по газораспределительным сетям АО «Сахатранснефтегаз» ' +
-                        'на территории Республики Саха (Якутия) (кроме Ленского района) и постановлением ГКЦ РС(Я) №283 от 20.12.2024 г. «Об установлении специальной надбавки к тарифам на услуги по транспортировке природного газа по газораспределительным ' +
-                        'сетям АО «Сахатранснефтегаз» в Республике Саха (Якутия) (кроме Ленского района) изменена цена на газ для юридических лиц.'
+                        'В соответствии с Приказами ФАС России от 29.12.2025 г. №1216/25 «Об утверждении размера платы за снабженческо-сбытовые услуги, оказываемые потребителям газа АО «Сахатранснефтегаз», ' +
+                        'от 29.12.2025 г. №1217/25 «Об утверждении оптовых цен на газ», от 30.12.2025 г. №1224/25 «Об утверждении тарифов на услуги по транспортировке газа по газораспределительным сетям АО «Сахатранснефтегаз» ' +
+                        'на территории Республики Саха (Якутия) (кроме Ленского района) и постановлением ГКЦ РС(Я) от 07.11.2025 г. №174 «Об установлении специальной надбавки к тарифам на услуги по транспортировке природного газа ' +
+                        'по газораспределительным сетям АО «Сахатранснефтегаз» в Республике Саха (Якутия) (кроме Ленского района) изменена цена на газ для юридических лиц.'
                     }
                 </p>
-                <p> <b>Цена природного газа, добываемого ПАО «ЯТЭК», для потребителей – юридических лиц с 01.07.2025 г. составляет:</b></p>
+                <p> <b>1. Цена природного газа без НДС за 1 000 м3, добываемого ПАО «ЯТЭК», для потребителей – юридических лиц с 01.10.2026 г. составит:</b></p>
 
-                {/* <div className="borders1">
-                    Исключающая группа (для Потребителей, указанных в столбце 9 приложения к Приказу ФАС от 28.11.2023 г. №909/23)
-                </div> */}
                 <IonRow>
                     <IonCol className="w-40 borders1" size="5" >
                         Годовое потребление по точкам подключения к газораспределительным сетям
@@ -1939,7 +1938,7 @@ function Info4() {
                         1 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        7 404,84
+                        8 152,89
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -1950,7 +1949,7 @@ function Info4() {
                         2 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        7 408,14
+                        8 159,14
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -1961,7 +1960,7 @@ function Info4() {
                         3 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        7 647,99
+                        8 428,71
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -1972,7 +1971,7 @@ function Info4() {
                         4 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        7 941,07
+                        8 756,75
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -1983,7 +1982,7 @@ function Info4() {
                         5 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                       7 943,01
+                        8 772,47
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -1994,7 +1993,7 @@ function Info4() {
                         6 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        7 950,30
+                        8 767,47
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -2005,11 +2004,11 @@ function Info4() {
                         7 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        7 980,37
+                        8 818,45
                     </IonCol>
                 </IonRow>
 
-                <p> <b>2. Цена природного газа, добываемого со Среднетюнгского газоконденсатного месторождения, для потребителей – юридических лиц с 01.07.2024 г. составляет:</b></p>
+                <p> <b>2. Цена природного газа без НДС за 1 000 м3, добываемого со Среднетюнгского газоконденсатного месторождения, для потребителей – юридических лиц с 01.10.2026 г. составит:</b></p>
 
                 <IonRow>
                     <IonCol className="w-40 borders1" size="5" >
@@ -2024,13 +2023,57 @@ function Info4() {
                 </IonRow>
                 <IonRow>
                     <IonCol className="w-40 borders1" size="5">
+                        св. 500 млн.м3
+                    </IonCol> 
+                    <IonCol className="w-30 borders1" size="3">
+                        1 группа
+                    </IonCol> 
+                    <IonCol className="w-30 borders1" size="4">
+                        6 562,06
+                    </IonCol>
+                </IonRow>
+                <IonRow>
+                    <IonCol className="w-40 borders1" size="5">
+                        от 100 до 500 млн.м3
+                    </IonCol> 
+                    <IonCol className="w-30 borders1" size="3">
+                        2 группа
+                    </IonCol> 
+                    <IonCol className="w-30 borders1" size="4">
+                        6 568,31
+                    </IonCol>
+                </IonRow>
+                <IonRow>
+                    <IonCol className="w-40 borders1" size="5">
+                        от 10 до 100 млн.м3
+                    </IonCol> 
+                    <IonCol className="w-30 borders1" size="3">
+                        3 группа
+                    </IonCol> 
+                    <IonCol className="w-30 borders1" size="4">
+                        6 837,88
+                    </IonCol>
+                </IonRow>
+                <IonRow>
+                    <IonCol className="w-40 borders1" size="5">
+                        от 1 до 10 млн.м3
+                    </IonCol> 
+                    <IonCol className="w-30 borders1" size="3">
+                        4 группа
+                    </IonCol> 
+                    <IonCol className="w-30 borders1" size="4">
+                        7 165,92
+                    </IonCol>
+                </IonRow>
+                <IonRow>
+                    <IonCol className="w-40 borders1" size="5">
                         от 100 до 1 000 тыс.м3
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="3">
                         5 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 918,90
+                        7 181,64
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -2041,7 +2084,7 @@ function Info4() {
                         6 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 926,19
+                        7 176,64
                     </IonCol>
                 </IonRow>
                 <IonRow>
@@ -2052,13 +2095,14 @@ function Info4() {
                         7 группа
                     </IonCol> 
                     <IonCol className="w-30 borders1" size="4">
-                        6 956,26
+                        7 227,62
                     </IonCol>
                 </IonRow>
 
             </div>
 
             <p className="ml-2">*Цены указаны без учета НДС и теплоты сгорания.</p>
+            <p className="ml-2">По всем вопросам обращаться в Отдел по работе с корпоративными клиентами (ОРКК).</p>
         </IonCard>
     </>
 

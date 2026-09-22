@@ -1,31 +1,33 @@
-import { IonImg, IonText } from "@ionic/react"
 import React from "react"
+import styles from "./Main.module.css"
 
-export function Hello():JSX.Element {
-    const elem = <>
-        <div className="ml-auto mr-auto p-page">
-        <div className="p-text">
-            <IonImg src = "assets/stng_logo1.svg"  class = "m-img"/>
-            <p className="a-center">
-                <IonText color={"tertiary"}> {"Добро пожаловать уважаемый Потребитель!"}</IonText>
-            </p>
-            <p className="ml-1">
-                <IonText color={"tertiary"}> Теперь вы сможете экономить время и совершать следующие действия в любое время дня и ночи из любой точки мира: </IonText>
-            </p>
-            <p className="ml-3">
-                <IonText color={"tertiary"}> - оперативно передавать данные о фактическом потреблении газа</IonText>
-            </p>
-            <p className="ml-3">
-                <IonText color={"tertiary"}> - контролировать текущую задолженность за газ</IonText>
-            </p>
-            <p className="ml-3">
-                <IonText color={"tertiary"}> - контролировать сроки поверок узлов учета газа</IonText>
-            </p>
-            <p className="ml-3">
-                <IonText color={"tertiary"}> - подавать заявления на заключения/перезаключения договоров на поставку газа</IonText>
-            </p>
-        </div>
-        </div>
-    </>
-    return elem
+export function Hello(): JSX.Element {
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <img
+          src="assets/logo2.1c3a9d80.svg"
+          alt="Логотип"
+          className={styles.logo}
+        />
+      </div>
+
+      <h1 className={styles.title}>Приветствие</h1>
+
+      <div className={styles.card}>
+        <p className={styles.lead}>
+          Добро пожаловать уважаемый Потребитель!
+        </p>
+        <p className={styles.intro}>
+          Теперь вы сможете экономить время и совершать следующие действия в любое время дня и ночи из любой точки мира:
+        </p>
+        <ul className={styles.list}>
+          <li>оперативно передавать данные о фактическом потреблении газа</li>
+          <li>контролировать текущую задолженность за газ</li>
+          <li>контролировать сроки поверок узлов учета газа</li>
+          <li>подавать заявления на заключения/перезаключения договоров на поставку газа</li>
+        </ul>
+      </div>
+    </div>
+  )
 }

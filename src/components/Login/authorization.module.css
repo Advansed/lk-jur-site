@@ -1,0 +1,567 @@
+/* authorization.module.css */
+
+/* Основной контейнер с фоном */
+.authorizationContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  background: 
+    url('pattern.png'), 
+    linear-gradient(156.39deg, #f5f5f5 7.75%, #ffffff 100.99%);
+  background-size: contain, auto;
+  background-repeat: no-repeat;
+  background-position: bottom, center;
+}
+
+/* Общие стили для всех платформ */
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem 1rem;
+}
+
+.logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1rem 2rem;
+  overflow-y: auto;
+}
+
+.title {
+  text-align: center;
+  color: #3f64a9;
+  font-weight: 700;
+  font-size: 1.8rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 1rem;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.inputGroup {
+  margin-bottom: 1.5rem;
+}
+
+.inputContainer {
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-bottom: 1px solid #3f64a9;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease;
+  backdrop-filter: blur(5px);
+  background: rgba(248, 249, 250, 0.9);
+}
+
+.inputContainer:focus-within {
+  border-color: #3f64a9;
+}
+
+.input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #2c3e50;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem 0;
+}
+
+.input::placeholder {
+  color: #95a5a6;
+}
+
+.button {
+  width: 100%;
+  background: linear-gradient(135deg, #3f64a9 0%, #2c5282 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(63, 100, 169, 0.25);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.linkButton {
+  background: transparent;
+  border: none;
+  color: #3f64a9;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.linkButton:hover {
+  text-decoration: none;
+}
+
+.registerPrompt {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.registerLink {
+  color: #3f64a9;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.registerLink:hover {
+  text-decoration: underline;
+}
+
+.message {
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 1rem 0;
+  text-align: center;
+  font-weight: 500;
+  backdrop-filter: blur(5px);
+}
+
+.errorMessage {
+  background: rgba(255, 234, 234, 0.9);
+  color: #e74c3c;
+  border: 1px solid rgba(250, 219, 216, 0.8);
+}
+
+.successMessage {
+  background: rgba(213, 244, 230, 0.9);
+  color: #27ae60;
+  border: 1px solid rgba(171, 235, 198, 0.8);
+}
+
+.infoMessage {
+  background: rgba(232, 244, 253, 0.9);
+  color: #3498db;
+  border: 1px solid rgba(214, 234, 248, 0.8);
+}
+
+/* Мобильные стили */
+@media (max-width: 768px) {
+  .authorizationContainer {
+    padding: 1rem;
+    background: 
+      url('pattern.png'), 
+      linear-gradient(156.39deg, #f5f5f5 7.75%, #ffffff 100.99%);
+    /* Уменьшаем паттерн на мобильных устройствах */
+    background-size: 120% auto, auto;
+    background-repeat: no-repeat;
+    background-position: bottom 10px center, center;
+  }
+
+  .header {
+    padding: 1.5rem 1rem 0.5rem;
+  }
+
+  /* Увеличиваем лого на мобильных устройствах */
+  .logo {
+    width: 250px; /* Было 100px */
+    height: 250px; /* Было 100px */
+    margin-bottom: 0.5rem;
+  }
+
+  .content {
+    padding: 0 0.5rem 1rem;
+    overflow-y: auto;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  .button {
+    padding: 0.875rem;
+    font-size: 1rem;
+  }
+
+  .inputContainer {
+    padding: 0.5rem 0.875rem;
+    border: 1px solid #3f64a9;
+    margin-bottom: 0.875rem;
+    background: rgba(248, 249, 250, 0.95);
+  }
+  
+  /* Дальнейшее уменьшение паттерна на очень маленьких экранах */
+  @media (max-width: 480px) {
+    .authorizationContainer {
+      /* Еще больше уменьшаем паттерн на очень маленьких экранах */
+      background-size: 140% auto, auto;
+      background-position: bottom 5px center, center;
+    }
+    
+    /* Еще больше увеличиваем лого на очень маленьких экранах */
+    .logo {
+      width: 240px;
+      height: 240px;
+    }
+  }
+  
+  /* Дополнительная адаптация для телефонов в портретной ориентации */
+  @media (max-width: 480px) and (orientation: portrait) {
+    .logo {
+      width: 230px;
+      height: 230px;
+    }
+    
+    .authorizationContainer {
+      background-size: 150% auto, auto;
+      background-position: bottom 20px center, center;
+    }
+  }
+  
+  /* Дополнительная адаптация для телефонов в альбомной ориентации */
+  @media (max-width: 768px) and (orientation: landscape) {
+    .logo {
+      width: 120px;
+      height: 120px;
+    }
+    
+    .header {
+      padding: 1rem 1rem 0.5rem;
+    }
+    
+    .authorizationContainer {
+      background-size: 100% auto, auto;
+      background-position: bottom center, center;
+    }
+  }
+}
+
+/* Десктоп стили */
+@media (min-width: 769px) {
+  .authorizationContainer {
+    padding: 2rem;
+    justify-content: center;
+    background: 
+      url('pattern.png'), 
+      linear-gradient(156.39deg, #f5f5f5 7.75%, #ffffff 100.99%);
+    background-size: contain, auto;
+    background-repeat: no-repeat;
+    background-position: bottom, center;
+  }
+
+  .content {
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow-y: auto;
+  }
+
+  .logo {
+    width: 140px;
+    height: 140px;
+  }
+
+  .title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    padding: 2rem;
+    max-width: 450px;
+    background: rgba(255, 255, 255, 0.85);
+  }
+
+  .inputContainer:hover {
+    border-color: #dfe6e9;
+    background: rgba(248, 249, 250, 0.95);
+  }
+
+  .inputContainer:focus-within:hover {
+    border-color: #3f64a9;
+  }
+  
+  /* Оптимизация для высоких экранов */
+  @media (min-height: 800px) {
+    .authorizationContainer {
+      background-size: cover, auto;
+    }
+  }
+}
+
+/* Стили для iOS */
+.iosButton {
+  border-radius: 24px !important;
+  font-weight: 500 !important;
+}
+
+/* Стили для Android */
+.androidButton {
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+}
+
+/* Анимация загрузки */
+.loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.loadingSpinner {
+  border: 4px solid rgba(243, 243, 243, 0.9);
+  border-top: 4px solid #3f64a9;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Пользовательский скроллбар для веба */
+@media (min-width: 769px) {
+  .authorizationContainer::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .authorizationContainer::-webkit-scrollbar-track {
+    background: rgba(241, 241, 241, 0.8);
+    border-radius: 4px;
+  }
+
+  .authorizationContainer::-webkit-scrollbar-thumb {
+    background: rgba(63, 100, 169, 0.7);
+    border-radius: 4px;
+  }
+
+  .authorizationContainer::-webkit-scrollbar-thumb:hover {
+    background: rgba(44, 82, 130, 0.8);
+  }
+  
+  .content::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .content::-webkit-scrollbar-thumb {
+    background: rgba(63, 100, 169, 0.3);
+    border-radius: 3px;
+  }
+}
+
+/* Ховер эффекты только для десктопа */
+@media (hover: hover) and (pointer: fine) {
+  .button:hover {
+    background: linear-gradient(135deg, #2c5282 0%, #1e3c72 100%);
+  }
+
+  .linkButton:hover {
+    color: #2c5282;
+  }
+
+  .registerLink:hover {
+    color: #2c5282;
+  }
+}
+
+/* Адаптивная типографика */
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.3rem;
+  }
+
+  .input {
+    font-size: 0.95rem;
+  }
+
+  .button {
+    font-size: 0.95rem;
+  }
+
+  .linkButton {
+    font-size: 0.9rem;
+  }
+
+  .registerPrompt {
+    font-size: 0.9rem;
+  }
+}
+
+/* Высокие экраны */
+@media (min-height: 800px) and (min-width: 769px) {
+  .authorizationContainer {
+    justify-content: center;
+    min-height: calc(100vh - 4rem);
+    background-size: 50% auto, auto;
+  }
+}
+
+/* Темная тема (опционально) */
+@media (prefers-color-scheme: dark) {
+  .authorizationContainer {
+    background: 
+      url('pattern.png'), 
+      linear-gradient(156.39deg, #1a202c 7.75%, #2d3748 100.99%);
+    background-size: contain, auto;
+    background-repeat: no-repeat;
+    background-position: bottom, center;
+  }
+
+  .card {
+    background: rgba(45, 55, 72, 0.9);
+    color: white;
+  }
+
+  .inputContainer {
+    background: rgba(74, 85, 104, 0.9);
+  }
+
+  .input {
+    color: white;
+  }
+
+  .input::placeholder {
+    color: #a0aec0;
+  }
+
+  .title {
+    color: #63b3ed;
+  }
+
+  .registerPrompt {
+    background: rgba(45, 55, 72, 0.8);
+    color: #cbd5e0;
+  }
+
+  .registerLink {
+    color: #63b3ed;
+  }
+
+  .linkButton {
+    color: #63b3ed;
+  }
+
+  .errorMessage {
+    background: rgba(116, 42, 42, 0.9);
+    color: #fc8181;
+    border-color: rgba(116, 42, 42, 0.8);
+  }
+
+  .successMessage {
+    background: rgba(34, 84, 61, 0.9);
+    color: #9ae6b4;
+    border-color: rgba(34, 84, 61, 0.8);
+  }
+  
+  .infoMessage {
+    background: rgba(30, 58, 90, 0.9);
+    color: #90cdf4;
+    border-color: rgba(30, 58, 90, 0.8);
+  }
+}
+
+/* Для паттерна с прозрачностью */
+.patternBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    url('pattern.png'), 
+    linear-gradient(156.39deg, #f5f5f5 7.75%, #ffffff 100.99%);
+  background-size: contain, auto;
+  background-repeat: no-repeat;
+  background-position: bottom, center;
+  z-index: -1;
+  opacity: 0.7;
+}
+
+/* Для случаев, когда нужно отдельно управлять фоном */
+.hasPatternBackground {
+  position: relative;
+  overflow-y: auto;
+}
+
+.hasPatternBackground::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    url('pattern.png'), 
+    linear-gradient(156.39deg, #f5f5f5 7.75%, #ffffff 100.99%);
+  background-size: contain, auto;
+  background-repeat: no-repeat;
+  background-position: bottom, center;
+  z-index: -1;
+}

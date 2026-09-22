@@ -179,6 +179,7 @@ return res
 export async function getDogs(){
     const info = Store.getState().login
     const res = await getData("jur_info", info )
+    console.log("dogs", res.data)
     if(!res.error) {
         Store.dispatch({ type: "dogs", dogs: res.data })
     } else Store.dispatch({ type: "dogs", dogs: [] })
@@ -248,18 +249,20 @@ export async function getHistory(){
 }
 
 Store.subscribe({ num: 1001, type: "login", func: ()=>{
+
+    console.log("login exec")
     
     getDogs();
 
     getInvoices();
 
-    getPayments();
+    // getPayments();
 
     getProfile();
 
-    getHistory();
+    // getHistory();
 
-    getServices();
+    // getServices();
 
 }})
 

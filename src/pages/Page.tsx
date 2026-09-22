@@ -3,6 +3,14 @@ import React from 'react';
 import { useHistory, useParams } from 'react-router';
 import './Page.css';
 import { Store } from '../components/Store';
+import { useLoginStore } from '../components/Login/loginStore';
+import { useAgreementsStore } from '../components/Agreements/agreementsStore';
+import { useAppsStore } from '../components/Apps/appsStore';
+import { useServicesStore } from '../components/Services/servicesStore';
+import { useProfileStore } from '../components/Profile/profileStore';
+import { useActSverkiStore } from '../components/ActSverki/actSverkiStore';
+import { useContactsStore } from '../components/Contacts/contactsStore';
+import { useInfoStore } from '../components/Info/infoStore';
 import { Agreements } from '../components/Agreements';
 import { arrowBackOutline, logOutOutline, personCircleOutline } from 'ionicons/icons';
 import { Profile } from '../components/Profile';
@@ -21,6 +29,16 @@ const Page: React.FC = () => {
   const { name } = useParams<{ name: string; }>();
 
   const hist = useHistory();
+  const logout = () => {
+    useLoginStore.getState().logout();
+    useAgreementsStore.getState().reset();
+    useAppsStore.getState().reset();
+    useServicesStore.getState().reset();
+    useProfileStore.getState().reset();
+    useActSverkiStore.getState().reset();
+    useContactsStore.getState().reset();
+    useInfoStore.getState().reset();
+  };
 
   const tbNames = [
     {name: "agreements", title: "Договора", JSX: function():JSX.Element { return <Agreements />}},
@@ -94,7 +112,7 @@ const Page: React.FC = () => {
             <IonButton
               color = 'tertiary'
               fill = "clear"
-              onClick={()=>{ Store.dispatch({ type: "auth", auth: false})}}
+              onClick={logout}
             >
               <IonIcon icon = { logOutOutline } className='w-15 h-15' />
                 Завершить сеанс
@@ -123,7 +141,7 @@ const Page: React.FC = () => {
               <IonButton
                 color = 'tertiary'
                 fill = "clear"
-                onClick={()=>{ Store.dispatch({ type: "auth", auth: false})}}
+                onClick={logout}
               >
                 <IonIcon icon = { logOutOutline } className='w-15 h-15' />
                   Завершить сеанс

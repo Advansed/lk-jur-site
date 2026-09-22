@@ -4,12 +4,15 @@ import { cameraOutline, documentAttachOutline, documentTextOutline, gitMergeOutl
         trashBinOutline, peopleOutline, businessOutline, waterOutline, shuffleOutline, trashOutline, bagAddOutline, bagHandleOutline, listOutline, closeCircleOutline, checkmarkCircleOutline 
     } from "ionicons/icons"
 import React, { useEffect, useState } from "react"
-import { Store, getData } from "./Store"
+import { useServices, submitService } from "./useServices"
+import { useLoginStore } from "../Login/loginStore"
+import { Store } from "../Store"
+import { useProfileStore } from "../Profile/profileStore"
 import { AddressSuggestions, FioSuggestions } from "react-dadata"
-import MaskedInput from "../mask/reactTextMask"
+import MaskedInput from "../../mask/reactTextMask"
 //import "./react-dadata.css"
-import "./Services.css"
-import { Files, Filess } from "./Files"
+import "./services.css"
+import { Files, Filess } from "../Files"
 import Select from "react-tailwindcss-select";
 import SignatureCanvas from 'react-signature-canvas'   
 
@@ -34,7 +37,8 @@ const icons = {
 }
 
 export function Services(){
-    const [ info,   setInfo ]   = useState<any>()
+    const { services } = useServices()
+    const [ info,   setInfo ]   = useState<any[]>([])
     const [ order,  setOrder ]  = useState<any>()
     const [ page,   setPage ]   = useState( 0 )
     const [ index,  setIndex ]  = useState( 0 )
@@ -53,21 +57,12 @@ export function Services(){
         else Store.dispatch({ type: "route", route: "back"})
     }})
 
-    Store.subscribe({num: 32, type: "services", func: ()=>{
-        setInfo( Store.getState().services )
-    }})
-
     useEffect(()=>{
-
-        setInfo( Store.getState().services )
-
-        console.log( Store.getState().services )
-        
+        setInfo( Array.isArray(services) ? services : [] )
         return ()=>{
             Store.unSubscribe( 31 )
-            Store.unSubscribe( 32 )
         }
-    },[])
+    },[services])
 
 
     async function Save()   {
@@ -105,8 +100,7 @@ export function Services(){
         if(messages.length > 0 ) {
            setAlert( messages )
         } else {
-           order.token = Store.getState().login.token
-           const res = await getData("jur_service", order )
+           await submitService( order )
            Store.dispatch({ type: "route", route: "services"})
         }
         setLoad(false)
@@ -175,7 +169,7 @@ export function Services(){
         return elem
     }
 
-    if(info !== undefined)
+    if(Array.isArray(info))
         for(let i = 0; i < info.length; i++) {
             elem = <>
                 { elem }
@@ -262,23 +256,24 @@ function Service(props: { info, page }){
 
 
     useEffect(()=>{
+        const profile = useProfileStore.getState().profile;
         for(const [ key ] of Object.entries(info)){
             if(key === "Заявка") continue
             if(key === "Описание") continue
             if(key === "Страниц") continue
             for(const [ req ] of Object.entries(info[ key ])){
                 switch( req) {
-                    case "Фамилия":                 info[key][req]      = Store.getState().profile.surname; break;    
-                    case "Имя":                     info[key][req]      = Store.getState().profile.name; break;    
-                    case "Отчество":                info[key][req]      = Store.getState().profile.lastname; break;    
-                    case "ПаспортСерия":            info[key][req][0]   = Store.getState().profile.passport.serial; break;    
-                    case "ПаспортНомер":            info[key][req][0]   = Store.getState().profile.passport.number; break;    
-                    case "ПаспортДатаВыдачи":       info[key][req][0]   = Store.getState().profile.passport.issuedDate; break;    
-                    case "Доп6":                    info[key][req][0]   = Store.getState().profile.passport.codePodr; break;    
-                    case "ПаспортКемВыдан":         info[key][req][0]   = Store.getState().profile.passport.issuedBy; break;    
-                    case "СНИЛС":                   info[key][req][0]   = Store.getState().profile.snils; break;    
-                    case "Доп1":                    info[key][req][0]   = Store.getState().profile.email; break;    
-                    case "КонтактныйТелефон":       info[key][req][0]   = Store.getState().login.phone; break;    
+                    case "Фамилия":                 if (profile) info[key][req]      = profile.surname; break;    
+                    case "Имя":                     if (profile) info[key][req]      = profile.name; break;    
+                    case "Отчество":                if (profile) info[key][req]      = profile.lastname; break;    
+                    case "ПаспортСерия":            if (profile?.passport) info[key][req][0]   = profile.passport.serial; break;    
+                    case "ПаспортНомер":            if (profile?.passport) info[key][req][0]   = profile.passport.number; break;    
+                    case "ПаспортДатаВыдачи":       if (profile?.passport) info[key][req][0]   = profile.passport.issuedDate; break;    
+                    case "Доп6":                    if (profile?.passport) info[key][req][0]   = profile.passport.codePodr; break;    
+                    case "ПаспортКемВыдан":         if (profile?.passport) info[key][req][0]   = profile.passport.issuedBy; break;    
+                    case "СНИЛС":                   if (profile) info[key][req][0]   = profile.snils; break;    
+                    case "Доп1":                    if (profile) info[key][req][0]   = profile.email; break;    
+                    case "КонтактныйТелефон":       info[key][req][0]   = useLoginStore.getState().login?.phone || Store.getState().login?.phone; break;    
                 }        
             }
         }
@@ -316,7 +311,7 @@ function Service(props: { info, page }){
                                         case "text"     : elem = <> { elem } <Text      info = {{ info: info[key], title: info[key][req][2], name: req }}  /> </>; break;
                                         case "date"     : elem = <> { elem } <Date      info = {{ info: info[key], title: info[key][req][2], name: req }}  /> </>; break;
                                         case "box"      : elem = <> { elem } <Box       info = {{ info: info[key], title: info[key][req][2], name: req, choice: info[key][req][3] }}  /> </>; break;
-                                        case "lics"     : elem = <> { elem } <Box       info = {{ info: info[key], title: info[key][req][2], name: req, choice: Store.getState().profile.lics }}  /> </>; break;
+                                        case "lics"     : elem = <> { elem } <Box       info = {{ info: info[key], title: info[key][req][2], name: req, choice: useProfileStore.getState().profile?.lics }}  /> </>; break;
                                         case "address"  : elem = <> { elem } <Address   info = {{ info: info[key], title: info[key][req][2], name: req }}  /> </>; break;
                                         default         : elem = <> { elem } </>
                                     }

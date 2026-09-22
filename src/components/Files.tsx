@@ -5,7 +5,9 @@ import { cameraOutline, playSkipBackCircleOutline, sendOutline } from "ionicons/
 import { jsPDF } from "jspdf";
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { IonButton, IonChip, IonIcon, IonLoading, IonModal, isPlatform } from "@ionic/react";
-import { Store, getData } from "./Store";
+import { getData } from "./Store"
+import { useProfileStore } from "./Profile/profileStore";
+import { useLoginStore } from "./Login/loginStore";
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { RenderCurrentScaleProps, RenderZoomInProps, RenderZoomOutProps, zoomPlugin } from '@react-pdf-viewer/zoom';
 
@@ -256,10 +258,10 @@ export function         PDFDoc( props ){
                     onClick={()=>{ 
                         async function send() {
                             const res = await getData('SendMail', {
-                                token: Store.getState().login.token,
+                                token: useLoginStore.getState().login?.token,
                                 type: props.title,
                                 name: props.name,
-                                email: Store.getState().profile.email,
+                                email: useProfileStore.getState().profile?.email,
                                 image: props.url,
                             } )
                             setMessage(res.message)

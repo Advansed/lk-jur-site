@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { IonAlert, IonApp, IonRouterOutlet, IonSplitPane, isPlatform, setupIonicReact } from '@ionic/react';
+import React, { useState, useEffect } from 'react';
+import { IonAlert, IonApp, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/react';
+import { Capacitor } from '@capacitor/core';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
 import Menu from './components/Menu';
@@ -25,8 +26,15 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import './app.css'
 import { Store } from './components/Store';
-import { Login } from './components/Login';
-import PropTypes from "prop-types";
+import { Login } from './components/Login/index';
+import { useLoginStore } from './components/Login/loginStore';
+import { loadDogs } from './components/Agreements/useAgreements';
+import { loadApps } from './components/Apps/useApps';
+import { loadServices } from './components/Services/useServices';
+import { loadProfile } from './components/Profile/useProfile';
+import { loadInvoicesAndDocs } from './components/ActSverki/useActSverki';
+import { loadContacts } from './components/Contacts/useContacts';
+import PropTypes from 'prop-types';
 import OneSignal from 'onesignal-cordova-plugin'
 
 
@@ -34,8 +42,14 @@ import OneSignal from 'onesignal-cordova-plugin'
 setupIonicReact();
 
 
-const App: React.FC = () => {
-  const [ auth, setAuth ] = useState( Store.getState().auth )
+function App() {
+  const auth = useLoginStore((state) => state.auth);
+  const login = useLoginStore((state) => state.login);
+  const setReg = useLoginStore((state) => state.setReg);
+  const setAuth = useLoginStore((state) => state.setAuth);
+  const setLogin = useLoginStore((state) => state.setLogin);
+  const setToken = useLoginStore((state) => state.setToken);
+  
   const [ message, setMessage] = useState<any>()
     
   Store.subscribe({ num: 3, type: "message", func: ()=>{
@@ -49,7 +63,7 @@ const App: React.FC = () => {
     // Uncomment to set OneSignal visual logging to VERBOSE  
     // OneSignal.Debug.setAlertLevel(6);
     console.log("OneSignal.init")
-  
+
     // NOTE: Update the init value below with your OneSignal AppId.
     OneSignal.initialize( "daff2bee-e428-4bd3-9f47-ac3c914113d6" );
 
@@ -68,31 +82,17 @@ const App: React.FC = () => {
       console.log("User accepted notifications: " + accepted);
     })
 
-    OneSignal.User.addAlias("external_id", Store.getState().login.id)
+    OneSignal.User.addAlias("external_id", login?.id || Store.getState().login?.id)
 
     console.log(JSON.stringify( OneSignal ))
   }
 
-  Store.subscribe({ num: 1, type: "auth", func: ()=>{
-    setAuth( Store.getState().auth ) 
-
-    if( Store.getState().auth )
-      if( isPlatform("mobile") )
-        OneSignalInit();
-
-  }})
-
-  App.propTypes = {
-    location: PropTypes.shape({
-      hash: PropTypes.string.isRequired,
-    }).isRequired,
-  };
-  
-  App.defaultProps = {
-    location: {
-      hash: '',
-    },
-  };
+  useEffect(() => {
+    console.log( 'auth', auth)
+    if (auth && Capacitor.isNativePlatform()) {
+      OneSignalInit();
+    }
+  }, [auth])
 
   return (
     auth
@@ -120,7 +120,7 @@ const App: React.FC = () => {
                       return <Login />
                     }
                     if(props.location.hash === '#/registr'){
-                      Store.dispatch({type: "reg", reg: true })
+                      setReg(true)
                       return <Login />
                     } else {
                       let jarr  = props.location.hash.split("?");
@@ -129,8 +129,15 @@ const App: React.FC = () => {
                           jarr = jarr[1].split("&")
                           jarr = jarr[1].split("=");
                           console.log( "token - " + jarr[1] )
-                          Store.dispatch({type: "login", login: { token: jarr[1] } })
-                          Store.dispatch({type: "auth", auth: true })
+                          setLogin({ token: jarr[1] })
+                          setToken(jarr[1])
+                          setAuth(true)
+                          loadDogs({ token: jarr[1] })
+                          loadApps({ token: jarr[1] })
+                          loadServices({ token: jarr[1] })
+                          loadProfile({ token: jarr[1] })
+                          loadInvoicesAndDocs({ token: jarr[1] })
+                          loadContacts()
                           return <></>    
                         } else return <Login />
                       } else return <Login />
@@ -150,8 +157,18 @@ const App: React.FC = () => {
         />
         </IonApp>
   );
+}
+
+App.propTypes = {
+  location: PropTypes.shape({
+    hash: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
-
+App.defaultProps = {
+  location: {
+    hash: '',
+  },
+};
 
 export default App;

@@ -1,92 +1,68 @@
 import React, { useEffect, useState } from "react"
-import { Store, getData } from "./Store"
+import { useProfileStore } from "../Profile/profileStore"
 import { IonButton, IonCard, IonContent, IonIcon, IonImg, IonInput, IonLoading, IonModal, IonPopover, isPlatform } from "@ionic/react"
 import { chevronDown, chevronForward, mailUnreadOutline, newspaperOutline } from "ionicons/icons";
-import { PDFDoc } from "./Files";
+import { PDFDoc } from "../Files";
+import {
+    useActSverki,
+    loadActsverkiImage,
+    loadDocAct,
+    loadDocSf,
+    loadInvoiceImage,
+    sendInvoiceMail,
+} from "./useActSverki"
 
 export function ActSverki():JSX.Element {
-    const[  info, setInfo] = useState<any>({
-        act:        "",
-        docs:       [],
-    })
+    const { invoices, docs, actsverki } = useActSverki()
     const[ load, setLoad ] = useState( false) 
     const [ modal, setModal ] = useState<any>()
-    const [ upd, setUpd ] = useState( 0 )
-    const [ message, setMessage ] = useState( "" )
+    const [ localAct, setLocalAct ] = useState( actsverki )
+
+    useEffect(() => {
+        setLocalAct(actsverki)
+    }, [actsverki])
 
     async function loadAct(){
-        if( info.act === "" ){
+        if( !localAct ){
             setLoad( true)
-            const res = await getData("jur_actsverki", {
-                token: Store.getState().login.token
-            })
-    
-            if(!res.error) {
-                info.act = res.data
-                Store.dispatch({ type: "actsverki", actsverki: res.data })
-                setModal({ image: info.act, name: "АктСверки", title: "Акт сверки"})
+            const data = await loadActsverkiImage()
+            if(data) {
+                setLocalAct(data)
+                setModal({ image: data, name: "АктСверки", title: "Акт сверки"})
             }
             setLoad( false )    
         } else {
-            setModal({ image: info.act, name: "АктСверки", title: "Акт сверки"})
-
+            setModal({ image: localAct, name: "АктСверки", title: "Акт сверки"})
         }
-        
     }
 
     async function loadAct1( doc ){
-        console.log(doc)
         if( doc.act === undefined ){
             setLoad( true)
-            const res = await getData("jur_docs_act", {
-                token:  Store.getState().login.token,
-                guid:   doc.ГУИД,
-            })
-            console.log( res )
-            if(!res.error) {
-                doc.act = res.data
+            const data = await loadDocAct(doc.ГУИД)
+            if(data) {
+                doc.act = data
                 setModal({ image: doc.act, name: "АктВыпРабот", title: "Акт выполненных работ"})
             }
             setLoad( false )    
         } else {
             setModal({ image: doc.act, name: "АктСверки", title: "Акт сверки"})
-
         }
-        
     }
 
     async function loadAct2( doc ){
-        console.log(doc)
         if( doc.sf === undefined ){
             setLoad( true)
-            const res = await getData("jur_docs_sf", {
-                token:  Store.getState().login.token,
-                guid:   doc.ГУИД,
-            })
-            console.log( res )
-            if(!res.error) {
-                doc.sf = res.data
+            const data = await loadDocSf(doc.ГУИД)
+            if(data) {
+                doc.sf = data
                 setModal({ image: doc.sf, name: "СчетФактура", title: "Счет-фактура"})
             }
             setLoad( false )    
         } else {
             setModal({ image: doc.sf, name: "СчетФактура", title: "Счет-фактура"})
-
         }
-        
     }
-
-    Store.subscribe({num: 501, type: "docs", func: ()=>{
-        info.docs = Store.getState().docs;
-        setUpd( upd + 1)
-    }})
-
-    useEffect(()=>{
-        info.act = Store.getState().actsverki
-        info.docs = Store.getState().docs
-        setUpd( upd + 1)
-    },[])
-
 
     const elem = <>
         <IonLoading isOpen={ load } message= "Подождите..."/>
@@ -106,9 +82,9 @@ export function ActSverki():JSX.Element {
             </div>
         </div>
 
-        <Invoices invoices = { Store.getState().invoices }/>
+        <Invoices invoices = { invoices || [] }/>
 
-        <Docs info = { info.docs } func1={ loadAct1 } func2 = { loadAct2 } />
+        <Docs info = { docs } func1={ loadAct1 } func2 = { loadAct2 } />
 
        <IonModal
             className="a-modal"
@@ -136,7 +112,7 @@ function Docs(props:{ info, func1, func2 }){
 
     let items = <></>
 
-    if( info !== undefined ){
+    if( info !== undefined && info !== null ){
         for( let i = 0; i < info.length; i++){
             let dogs = <></>
             for(let j = 0; j < info[i].Документы.length;j++){
@@ -210,28 +186,23 @@ function Invoices(props: { invoices }):JSX.Element {
     const [ messages, setMessages ] = useState("")
     const [ invoice, setInvoice ] = useState("")
     const [ expand, setExpand ] = useState( false )
-    const invoices = props.invoices;
+    const invoices = props.invoices || [];
     let elem  = <></>
 
     function Mail(props: { id }) {
         const [ mail, setMail ] = useState( "" )
 
-        useEffect(()=>{ setMail(Store.getState().profile.Логин.элПочта[0]) },[])
+        useEffect(()=>{ setMail(useProfileStore.getState().profile?.Логин?.элПочта?.[0] || "") },[])
 
         async function sendMail(id){
             setLoad( true)
-            let res = await getData("jur_invoice_image", {
-                token : Store.getState().login.token,
-                id: id,
-            })
-            if(!res.error) {
-                res = await getData('jur_sendMail', {
-                    token: Store.getState().login.token,
-                    type: "Квитанция",
-                    name: "Kvitok",
+            const image = await loadInvoiceImage(id)
+            if(image) {
+                const res = await sendInvoiceMail({
+                    id,
                     email: mail,
-                    image: res.data,
-                } )
+                    image,
+                })
                 if(!res.error)
                     setMessages( "Квитанция успешно отправлена на почту" )
                 else 
@@ -266,12 +237,8 @@ function Invoices(props: { invoices }):JSX.Element {
 
     async function getImg( id: string) {
         setLoad(true)
-        const res = await getData("jur_invoice_image", {
-            token : Store.getState().login.token,
-            id: id,
-        })
-        console.log( res )
-        if(!res.error) setInvoice( res.data )
+        const data = await loadInvoiceImage(id)
+        if(data) setInvoice( data )
         setLoad(false)
     }
             
@@ -360,7 +327,6 @@ function Invoices(props: { invoices }):JSX.Element {
                         ? <PDFDoc url={ invoice } name = { "СчетНаОплату" } title = { "Счет на оплату" }/> 
                         : <iframe title="pdf" src = { invoice } className="w-100 h-100"/>
                 }
-                <iframe title="pdf" src = { invoice } className="w-100 h-100"/>
             </div>
         </IonModal>
         

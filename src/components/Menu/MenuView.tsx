@@ -11,8 +11,8 @@ import {
 
 import { useLocation } from 'react-router-dom';
 import { calendarOutline, calendarSharp, chatboxEllipsesOutline, chatboxEllipsesSharp, cogOutline, cogSharp, helpOutline, helpSharp, layersOutline, layersSharp, listOutline, listSharp, personCircleOutline, personCircleSharp } from 'ionicons/icons';
-import './Menu.css';
-import { Store } from './Store';
+import './menu.css';
+import { Store } from '../Store';
 
 interface AppPage {
   url: string;

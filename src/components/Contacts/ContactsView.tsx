@@ -1,21 +1,11 @@
-import { IonCard, IonIcon, IonText } from "@ionic/react";
-import React, { useEffect, useState } from "react";
-import { getData } from "./Store";
+import { IonCard, IonIcon } from "@ionic/react";
+import React, { useState } from "react";
 import { callSharp, chevronDownOutline, chevronUpOutline, homeSharp, mailOpenSharp } from "ionicons/icons";
 import './contacts.css'
+import { useContacts } from "./useContacts"
 
 export function Contacts(){
-    const [ info, setInfo ] = useState<any>()
-
-    useEffect(()=>{
-        async function load() {
-            const res = await getData("jur_contacts",{})
-            console.log(res)
-            if(!res.error)
-            setInfo( res.data )
-        }
-        load()
-    },[])
+    const { contacts: info } = useContacts()
 
     function Items1(){
         function Item(props:{ info }){
@@ -89,7 +79,7 @@ export function Contacts(){
     
         let items = <></>
     
-        for(let i = 0; i < info?.Данные1.length; i++){
+        for(let i = 0; i < info?.Данные1?.length; i++){
             items = <>
                 { items }
                 <Item info = { info.Данные1[i] } />
@@ -149,7 +139,7 @@ export function Contacts(){
         }
 
         let elem = <></>
-        for( let i = 0; i < info?.Данные2.length;i++){
+        for( let i = 0; i < info?.Данные2?.length;i++){
             elem = <>
                 { elem }
                 <Item info = { info.Данные2[i] } />

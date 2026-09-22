@@ -1,12 +1,13 @@
 import { IonButton, IonCard, IonChip, IonIcon, IonLoading, IonModal } from "@ionic/react"
-import React, { useEffect, useState } from "react"
-import { Store, getData } from "./Store"
-import "./Apps.css"
+import React, { useState } from "react"
+import { getData } from "../Store"
+import "./apps.css"
 import { arrowForwardOutline, cameraOutline, playSkipBackCircleOutline, saveOutline } from "ionicons/icons"
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import jsPDF from "jspdf"
-import { Filess } from "./Files"
+import { Filess } from "../Files"
+import { useApps, getLoginToken } from "./useApps"
 
 defineCustomElements(window)
 
@@ -58,7 +59,7 @@ async function toPDF( pages, name ) {
         const dataurl = canvas.toDataURL( 'image/jpeg' );
             
         k = wt /210
-        if( ht / 297 > k ) k = ht / 297
+        if( ht / 297 > k ) k = ht / 297;
 
         if(i > 0) doc.addPage();
 
@@ -71,21 +72,8 @@ async function toPDF( pages, name ) {
 
 
 export function Apps():JSX.Element {
-    const [ info, setInfo ] = useState<any>([])
+    const { apps: info } = useApps()
     let elem = <></>
-
-    Store.subscribe({num: 21, type: "apps", func: ()=>{
-        setInfo( Store.getState().apps )
-    }})
-
-    useEffect(()=>{
-        setInfo( Store.getState().apps )
-        
-        return ()=>{
-            Store.unSubscribe( 21 )
-        }
-    },[])
-
 
     function App(props: { info }):JSX.Element{
         const [files, setFiles] = useState( false )
@@ -174,7 +162,7 @@ export function Apps():JSX.Element {
                 console.log( jarr )
                 if( jarr !== undefined ){
                     const res = await getData("jur_history_files", {
-                        token:  Store.getState().login.token,
+                        token:  getLoginToken(),
                         id:    info.id,
                     })
                     if(!res.error) {
@@ -237,7 +225,7 @@ export function Apps():JSX.Element {
                     setLoad( true)
                     const res = await getData("jur_history_files", {
 
-                        token :     Store.getState().login.token,
+                        token :     getLoginToken(),
                         id:         info.id,
                         name:       props.info,
                         files:      info.Файлы[ props.info ].files, 
@@ -378,7 +366,7 @@ export function Apps():JSX.Element {
                                         onClick={()=>{
                                             async function upload(){
                                                 const res = await getData("jur_sfiles", {
-                                                    token:  Store.getState().login.token,
+                                                    token:  getLoginToken(),
                                                     id:     info.id,
                                                     files:  info.files
                                                 })
