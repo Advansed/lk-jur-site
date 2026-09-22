@@ -4,7 +4,7 @@ import { Reducer } from 'react';
 
 const reducers: Array<Reducer<any, any>> = []
 
-export const version = "7.1"
+export const version = "7.5"
 
 export const i_state = {
 
